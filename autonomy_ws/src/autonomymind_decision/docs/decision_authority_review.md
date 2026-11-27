@@ -1,28 +1,31 @@
-# AutonomyMind R9.16 Decision Authority Review
+# Decision Authority Architecture
 
-## Non-negotiable architecture
+## Scope
 
-The **compiled C++ Unified Core is the sole operational decision authority**.
+AutonomyMind separates deterministic decision authority from transport, visualization, replay, and advisory AI/ML components.
 
-Production Python is passive. It may read/normalize recorded inputs, marshal raw inputs into the C ABI, replay telemetry, serialize Core outputs, and expose factual source availability. It must not select `nav_mode`, author `decision`, `reason`, `guidance`, `nav_health` or `active_rule`, apply policy thresholds, implement persistence/hysteresis/arbitration, or replace unavailable NAV inputs with validation ground truth.
+This is an open reference architecture for software development and testing. It is not a certification artifact and does not encode requirements for a specific customer, partner, vehicle, or deployment program.
 
-The dashboard is presentation-only and renders the Core/API outputs rather than reconstructing operational state.
+## Deterministic authority
 
-## C++ decision chain reviewed
+The compiled C++ core evaluates navigation evidence, context, mission state, traffic, candidate trajectories, and configured runtime-assurance checks.
 
-`core/src/core.cpp` computes source validity, NAV mode, integrity, context events, mission geometry, traffic prediction, arbitration and final decision. Priority is:
+Supporting components may:
 
-1. insufficient validated NAV sources -> `HOLD / NAV_UNAVAILABLE`;
-2. NAV integrity below HOLD criterion -> `HOLD / NAV_INTEGRITY_HOLD`;
-3. traffic conflict -> avoidance;
-4. persistent estimator disagreement -> `VERIFY_NAV`;
-5. insufficient redundancy -> `DEGRADE_NAV`;
-6. degraded NAV integrity -> `DEGRADE_NAV`;
-7. mission cross-track criterion -> `REJOIN_PATH`;
-8. otherwise -> `CONTINUE_MISSION`.
+- marshal inputs;
+- replay synthetic or recorded test data;
+- serialize outputs;
+- visualize evidence;
+- provide advisory rankings.
 
-The controlled baseline declares one source as the minimum operational count and two as the required redundancy count. These states are produced by the C++ Core, not by Python.
+Supporting components must not silently replace unavailable operational inputs with validation ground truth.
 
-## Ground truth
+## Example decision flow
 
-Validation or ground-truth data must not silently replace unavailable operational NAV inputs. Replay tooling may compare Core results against expected outcomes, but expected labels must not participate in runtime decision generation.
+The development policy demonstrates fail-closed behavior, navigation assurance, traffic avoidance, mission rejoin, and deterministic arbitration.
+
+All thresholds and limits are external configuration values and are provided only as example software-test defaults. Real-world use requires independent engineering review and deployment-specific values.
+
+## Validation boundary
+
+Expected labels and synthetic truth data may be used to evaluate output during testing, but they must not participate in runtime decision generation.

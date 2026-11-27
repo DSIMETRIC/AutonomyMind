@@ -1,9 +1,13 @@
-# AutonomyMind Decision Architecture: Behavior Trees, Physical Candidate Trajectories and Full RTA
+# AutonomyMind Decision Architecture
 
 ## Purpose
-The safety-relevant runtime is deterministic C++. Python and dashboards are presentation/transport layers and do not own thresholds, arbitration or safety policy.
+
+This document describes a generic deterministic decision and runtime-assurance architecture for autonomous systems.
+
+It is intended for open development, simulation, research, and software validation. It does not define certified or deployment-approved behavior for any specific vehicle, customer, partner, or program.
 
 ## Runtime flow
+
 ```text
 Perception / Navigation / Mission
             |
@@ -11,10 +15,10 @@ Perception / Navigation / Mission
    Situation Evaluation
             |
             v
-   MissionDecisionTree
+     Decision Logic
             |
             v
- CollisionAvoidanceTree
+ Collision Avoidance
             |
  LEFT / RIGHT / CLIMB candidates
             |
@@ -22,9 +26,9 @@ Perception / Navigation / Mission
  Physical Trajectory Generator
             |
             v
-       FullRtaChecker
+ Runtime-Assurance Checks
    /        |       |        \
-Traffic  Terrain  Geofence  Flight envelope
+Traffic  Terrain  Geofence  Motion envelope
    \        |       |        /
              PASS
               |
@@ -35,19 +39,23 @@ Traffic  Terrain  Geofence  Flight envelope
       Decision / Guidance
 ```
 
-## Physical LEFT / RIGHT model
-LEFT and RIGHT are no longer lateral translations. Horizontal speed is preserved while heading transitions smoothly through a configured turn angle using a quintic profile. Yaw rate is derived from the heading profile; lateral acceleration is `v * yaw_rate`; bank angle is estimated with `atan(a_lateral/g)`. Candidate position is integrated deterministically at the configured prediction step.
+## Candidate trajectories
 
-This is a coordinated-turn kinematic approximation, not a 6-DoF aerodynamic aircraft model.
+LEFT and RIGHT candidates use a deterministic coordinated-turn kinematic approximation. Horizontal speed is preserved while heading transitions smoothly through a configured turn angle. Candidate position is integrated at the configured prediction step.
 
-## Full RTA gates
-A candidate is selectable only when all gates pass:
-1. predicted 3-D traffic separation;
+This model is intentionally simplified for software development and simulation. It is not a full vehicle-dynamics model.
+
+## Runtime-assurance checks
+
+A candidate may be selected only when all configured checks pass:
+
+1. predicted traffic separation;
 2. terrain clearance;
 3. 3-D geofence containment;
-4. flight envelope: speed, vertical speed, acceleration, jerk, yaw rate and bank angle.
+4. configured motion-envelope limits.
 
-The baseline terrain model is a flat elevation plane and the geofence is an axis-aligned 3-D volume. Mission-specific terrain/geofence providers can replace those data sources without changing RTA authority semantics.
+The repository includes simple reference implementations so the decision pipeline can be tested deterministically. Real deployments require independently reviewed environment models, vehicle limits, sensing assumptions, and safety requirements.
 
-## Fail safe
-Invalid input produces HOLD. Disarmed state produces STANDBY/NO_COMMAND. A traffic conflict with no fully RTA-valid candidate produces HOLD. GPS denied without a validated alternate navigation source produces HOLD.
+## Fail-safe behavior
+
+Malformed input fails closed. If the system cannot establish sufficient navigation evidence or no candidate satisfies the configured checks, the example policy selects a hold/no-command behavior rather than fabricating a valid state.
