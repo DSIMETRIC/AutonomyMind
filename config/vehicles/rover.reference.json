@@ -1,0 +1,6 @@
+{
+  "model": "differential",
+  "radius_m": 0.5,
+  "max_speed_mps": 0.5,
+  "max_turn_rad": 1
+}

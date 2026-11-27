@@ -1,0 +1,7 @@
+{
+  "model": "multirotor",
+  "radius_m": 0.6,
+  "max_speed_mps": 2,
+  "max_turn_rad": 1,
+  "max_vertical_mps": 1
+}
