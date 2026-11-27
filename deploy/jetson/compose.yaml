@@ -54,3 +54,21 @@ services:
           -p camera_topic:=/autonomymind/observations/camera \
           -p lidar_topic:=/autonomymind/observations/lidar \
           -p output_topic:=/autonomymind/observations/fused
+
+
+  tracking:
+    build:
+      context: ../..
+      dockerfile: Dockerfile.ros
+    image: autonomymind/ros:jazzy-dev
+    platform: linux/arm64
+    network_mode: host
+    command:
+      - bash
+      - -lc
+      - |
+        source /opt/ros/jazzy/setup.bash
+        source /workspace/install/setup.bash
+        ros2 run autonomymind_tracking multi_object_tracker --ros-args \
+          -p input_topic:=/autonomymind/observations/fused \
+          -p output_topic:=/autonomymind/observations/tracks
