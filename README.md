@@ -222,11 +222,19 @@ Perception Agent
         ↓
 Observation
         ↓
+Sensor Fusion Agent
+        ↓
+Fused Observation
+        ↓
 World Model Agent
         ↓
 WorldState
         ↓
 Planning Agent
+        ↓
+Planning Proposal
+        ↓
+Decision Agent
         ↓
 AgentProposal
         ↓
