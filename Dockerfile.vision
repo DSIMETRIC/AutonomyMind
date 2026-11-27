@@ -1,0 +1,7 @@
+FROM python:3.12-slim
+WORKDIR /workspace
+ENV PYTHONDONTWRITEBYTECODE=1 PYTHONUNBUFFERED=1 PYTHONPATH=/workspace/src
+RUN pip install --no-cache-dir numpy==2.1.3 pillow==11.0.0 onnxruntime==1.20.1
+COPY src/ /workspace/src/
+COPY tests/vision/ /workspace/tests/vision/
+ENTRYPOINT ["python","-m","autonomymind_runtime.cpu_vision"]
