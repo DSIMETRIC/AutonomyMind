@@ -1,8 +1,126 @@
-# AutonomyMind Architecture
+# AutonomyMind — target architecture and reference baseline
+
+## 1. Architectural direction
+
+AutonomyMind is intended to evolve into a distributed network of specialized AI agents, not a monolithic model or a collection of hardcoded demonstrations. The system supports heterogeneous fleets including autonomous road vehicles, drones, rovers, aircraft and mobile robots. An agent is a versioned role with inputs, outputs, tools, execution budget, health and provenance; learned AI is interchangeable with classical algorithms. Deterministic reference modules are useful regression baselines.
+
+The fleet Coordination Agent is the logical orchestration role, not necessarily a single process or a permanent centralized leader. Initial implementation may be centralized; replication, distributed negotiation and partition handling are future work. Local safety authority is never delegated to the coordinator.
+
+```mermaid
+flowchart TB
+  U[Human supervision and mission objectives] --> M[Mission Agent]
+  M --> C[Coordination Agent]
+  R[Fleet and Agent Registry] <--> C
+  C <--> SW[Shared Semantic World Model]
+  C <--> X[Communication Agent]
+  subgraph Fleet[Replicated per-vehicle autonomy stacks]
+    A[Road fleet vehicle agents]
+    B[Drone agents]
+    D[Rover and robot agents]
+    E[Other vehicle agents]
+  end
+  X <--> A
+  X <--> B
+  X <--> D
+  X <--> E
+  A --> SA[Local deterministic RTA A]
+  B --> SB[Local deterministic RTA B]
+  D --> SD[Local deterministic RTA D]
+  E --> SE[Local deterministic RTA E]
+```
+
+## 2. Agent lifecycle and contracts
+
+Agents discover capabilities and register versioned schemas, consume timestamped observations, publish proposals and evidence, report health, and record decisions. Proposed orchestration metadata includes agent identity, instance, version, model digest, supported capabilities, input/output schemas, frame, source clock, deadline, confidence, dependencies and correlation ID. Existing Observation, WorldState, AgentProposal and SafetyDecision contracts are the starting point; registry discovery and distributed lease protocols remain to be implemented.
+
+```mermaid
+sequenceDiagram
+ participant M as Mission Agent
+ participant C as Coordination Agent
+ participant W as Shared World Model
+ participant L as Local Planner / Decision Agent
+ participant S as Independent local RTA
+ participant V as Execution gate
+ M->>C: Goal, constraints, priority
+ W->>C: Versioned observations and fleet state
+ C->>L: Proposed task and coordination intent
+ L->>S: Trajectory, state, constraints, provenance
+ S-->>L: Assessment with evidence
+ alt Authorized and fresh
+ L->>V: Matching proposal and authorization
+ else Rejected or stale
+ L->>V: No authorization; vehicle-specific recovery
+ end
+ V-->>W: Telemetry and outcome
+```
+
+Target semantics: task leases and acknowledgements, explicit unknown peers, common coordinate-frame and clock contracts, bounded message age, idempotent events, conflict resolution and reconciliation after network partitions. A task assignment does not authorize movement. On loss of connectivity, local policy determines an independently assessed fallback; a stop is not generally feasible for fixed-wing aircraft.
+
+## 3. Local autonomy and model abstraction
+
+Perception, fusion, localization, mapping, prediction, planning and decision agents consume sensor and model contracts instead of simulator-specific positions. A model registry selects the vehicle kinematics/dynamics, footprint, reachable controls and limits from a profile. Road vehicles additionally need lane topology, traffic rules, signals and behavioral prediction; aircraft need 3D terrain, airspace and feasible flight envelopes. These capabilities are planned beyond the current reference models.
+
+## 4. Independent deterministic safety
+
+```mermaid
+flowchart LR
+  A[Agent proposals] --> V[Validate state and contract]
+  V --> R[Independent deterministic RTA]
+  R -->|accepted and current| G[Execution gate]
+  R -->|rejected or stale| F[Vehicle-specific recovery assessment]
+  G --> T[Simulator or vehicle adapter]
+  F --> R
+  T --> E[Telemetry and audit]
+```
+
+No AI agent, including Coordination or Learning, can bypass the safety gate. The existing C++ checker evaluates sampled trajectories against simplified geometry, traffic and envelope constraints. Its simulation service assesses and records; it is not a certified command authority. Independent freshness, calibrated uncertainty, actuator feedback, continuous-time collision checks and safe fallback/watchdog behavior need further validation. Keep ground-contact normalization specific to simulation adapters.
+
+## 5. Data and learning plane
+
+```mermaid
+flowchart LR
+ D[Licensed dataset adapters] --> N[Normalize and preserve provenance]
+ S[Simulator adapters] --> N
+ N --> W[Replay and world model inputs]
+ W --> E[Evaluation Agent]
+ E --> A[Annotation / SemanticMap boundary]
+ A --> H[Human review]
+ H --> T[Training or adaptation]
+ T --> R[Versioned model registry]
+ R --> G[Regression and release gate]
+ G -. approved model .-> W
+```
+
+See [dataset-scenario-engine.md](dataset-scenario-engine.md). Dataset labels and ground truth must remain distinct from runtime observations. Real-world traffic data does not establish cooperative communications or fleet identity. No training on restricted data or automatic promotion of models into safety-critical operation.
+
+## 6. Deployment
+
+The initial baseline uses Docker and ROS 2 Jazzy. Each local autonomy stack should run on its vehicle or an appropriate isolated compute instance; shared coordination and evaluation can run at fleet/edge infrastructure. Gazebo, Isaac, CARLA, traffic and flight SITL adapters are replaceable boundaries, not dependencies of the core. Existing amd64/arm64 targets are build targets, not a claim of tested deployment on every platform.
+
+## 7. Implementation roadmap
+
+| Milestone | Deliverable | Status |
+|---|---|---|
+| A | Versioned contracts, deterministic reference agents, Docker, ROS, C++ RTA | Reference baseline |
+| B | Sensor adapters, fusion, tracking, occupancy and A* | Components available; live integration incomplete |
+| C | Configurable vehicle models and fleet allocation | Reference modules available |
+| D | Integrate model-aware planning, live world model and independent RTA | Pending |
+| E | Agent registry, coordinator lifecycle, DDS events and task leases | Pending |
+| F | Dataset/scenario engine and licensed offline replay | Pending |
+| G | Variable heterogeneous fleet simulation, randomized tests, network faults | Pending |
+| H | Road-domain and 3D flight planning, CARLA/SITL adapters | Pending |
+| I | Learned-agent evaluation and controlled model releases | Pending |
+
+Acceptance should be based on measured scenario outcomes, coverage across random seeds and vehicle counts, fault injection, reproducible traces, and explicit unknown or rejected states. Passing a scripted regression is not proof of general autonomy.
+
+## 8. Reference architecture history
+
+The following earlier architecture diagrams document the original reference verticals. They are historical design illustrations, not current claims of complete integration. Where an earlier diagram depicts direct actuation or fallback, the safety boundary above governs. The fixed candidate sets, waypoint routes and synthetic frames remain regression fixtures rather than the intended production planner.
+
 
 AutonomyMind is organized as an agentic autonomy stack with deterministic safety boundaries, simulation, and semantic-data feedback.
 
-## 1. System architecture
+### 1. System architecture
 
 ```mermaid
 flowchart TB
@@ -31,7 +149,7 @@ flowchart TB
   Train --> PA
 ```
 
-## 2. Agent contract flow
+### 2. Agent contract flow
 
 ```mermaid
 sequenceDiagram
@@ -58,7 +176,7 @@ sequenceDiagram
   end
 ```
 
-## 3. Safety boundary
+### 3. Safety boundary
 
 ```mermaid
 flowchart LR
@@ -84,7 +202,7 @@ flowchart LR
 
 AI components can generate candidates, probabilities, semantic interpretations, explanations, and coordination proposals. They cannot bypass deterministic validation.
 
-## 4. Simulation and learning loop
+### 4. Simulation and learning loop
 
 ```mermaid
 flowchart LR
@@ -101,7 +219,7 @@ flowchart LR
   Gate --> Run
 ```
 
-## 5. Cooperative robotics
+### 5. Cooperative robotics
 
 ```mermaid
 flowchart TB
@@ -119,7 +237,7 @@ flowchart TB
 
 Local safety does not depend on permanent connectivity to the shared coordination layer.
 
-## 6. Deployment topology
+### 6. Deployment topology
 
 ```mermaid
 flowchart LR
@@ -142,7 +260,7 @@ flowchart LR
 ```
 
 
-## 7. Camera + LiDAR fusion
+### 7. Camera + LiDAR fusion
 
 ```mermaid
 flowchart LR
@@ -159,7 +277,7 @@ flowchart LR
 The fusion reference implementation rejects temporally misaligned pairs, transforms LiDAR points into the camera frame, projects them with calibrated intrinsics, associates projected points with 2-D detections, and publishes 3-D observations with explicit uncertainty and provenance.
 
 
-## 8. Temporal 3D tracking
+### 8. Temporal 3D tracking
 
 ```mermaid
 flowchart LR
@@ -178,7 +296,7 @@ flowchart LR
 The reference tracker uses deterministic nearest-neighbor association with constant-velocity prediction, semantic-label compatibility, configurable 3-D gating, one-to-one assignment, and bounded track lifetime. This keeps the public baseline auditable while preserving the contract needed for future probabilistic or learned tracking.
 
 
-## 9. Dynamic avoidance milestone
+### 9. Dynamic avoidance milestone
 
 ```mermaid
 flowchart LR
@@ -201,7 +319,7 @@ flowchart LR
 The public reference planner evaluates predicted relative motion over a finite horizon, produces multiple transparent candidates, validates them independently, and records the complete decision evidence for replay.
 
 
-## 10. Cooperative autonomy execution
+### 10. Cooperative autonomy execution
 
 ```mermaid
 flowchart TB
@@ -224,7 +342,7 @@ flowchart TB
 The shared coordination layer can recommend task allocation and deconfliction, but it does not bypass each vehicle's local deterministic safety authority.
 
 
-## 11. Demo and replay architecture
+### 11. Demo and replay architecture
 
 ```mermaid
 flowchart LR

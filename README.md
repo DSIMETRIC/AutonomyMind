@@ -1,379 +1,143 @@
 # AutonomyMind
 
-AutonomyMind is an open, agentic autonomy architecture for cooperative drones, rovers, and robotic systems.
+**An agentic autonomy platform for heterogeneous, cooperative fleets.**
 
-The platform is organized around four pillars:
+AutonomyMind aims to bring autonomous road-vehicle fleets, drones, rovers, aircraft and mobile robots into a common architecture for perception, semantic understanding, mission planning, cooperation and auditable execution. Vehicle count, capabilities, missions, models and simulator adapters are configuration-driven rather than embedded in scenario code.
 
-1. **Agentic Autonomy** — specialized AI agents for perception, fusion, world modeling, planning, coordination, and decision support.
-2. **Simulation** — integrated simulation and synthetic-data workflows, with NVIDIA Isaac Sim as the primary simulation target.
-3. **Semantic Data** — annotation, dataset, map, and model workflows through a clean SemanticMap-compatible integration boundary.
-4. **Deterministic Safety** — operational safety and runtime-assurance checks remain outside unconstrained AI authority.
+The long-term architecture is a network of specialized AI agents, coordinated by a Coordination Agent at fleet level, with local agents and independent deterministic runtime assurance (RTA) on each vehicle. Agents can use learned models, classical algorithms or tools behind versioned interfaces. The current reference implementations are predominantly deterministic, not a fully deployed AI-agent fleet.
 
-## Architecture
+## Target architecture
 
-```text
-Real / Synthetic Sensors
-        |
-        v
- Perception Agent
-        |
-        v
- Sensor Fusion Agent
-        |
-        v
- World Model / Semantic Memory
-        |
-        +--------------------+
-        |                    |
-        v                    v
- Planning Agent       Coordination Agent
-        |                    |
-        +---------+----------+
-                  |
-                  v
-            Decision Agent
-                  |
-                  v
-      Deterministic Safety / RTA
-                  |
-                  v
-          Robot / Drone / Rover
+```mermaid
+flowchart TB
+  M[Mission and human supervision] --> MA[Mission Agent]
+  MA --> CO[Coordination Agent]
+  REG[Fleet and Agent Registry] <--> CO
+  CO <--> WM[Shared Semantic World Model]
+  CO <--> COM[Communication Agent]
+  subgraph Local[Per-vehicle agent stack, replicated N times]
+    P[Perception Agent] --> F[Sensor Fusion Agent]
+    L[Localization Agent] --> W[Local World Model Agent]
+    F --> W
+    W --> PR[Prediction Agent]
+    PR --> PL[Planning Agent]
+    PL --> D[Decision Agent]
+    D --> RTA[Independent deterministic RTA]
+    RTA --> G[Execution gate and vehicle adapter]
+    G --> T[Vehicle or simulator]
+    T --> P
+  end
+  COM <--> W
+  CO --> PL
+  W --> WM
+  T --> E[Evaluation and Learning Agents]
+  E --> H[Human review and model registry]
+  H -. approved versions .-> P
 ```
 
-The AI layer may reason, rank, propose, explain, and coordinate. Safety-critical execution remains constrained by deterministic policies and runtime-assurance gates.
+The Coordination Agent allocates and renegotiates tasks, reconciles shared observations, and proposes fleet-level deconfliction. It is not a remote actuator authority. Each vehicle retains its own planning, health supervision and safety gate; a missing or stale coordination message must not be interpreted as permission to move. Distributed operation, failover and independently validated fallback behavior are target capabilities, not current guarantees.
 
-## Closed-loop development
+## Agent responsibilities
 
-```text
-Real Data
-   |
-   v
-Semantic Annotation / Review
-   |
-   v
-Datasets + Model Registry
-   |
-   v
-Train / Adapt / Evaluate
-   |
-   v
-Autonomy Agents
-   |
-   v
-Decision + Safety
-   |
-   v
-Robot
-   ^
-   |
-Simulation / Isaac Sim
-   |
-   +--> Synthetic Data
-   +--> Edge Cases
-   +--> Regression Scenarios
-   +--> Evaluation
-```
+| Agent | Responsibility |
+|---|---|
+| Mission | Goal decomposition, priorities, task dependencies and progress |
+| Coordination | Capability matching, task allocation, conflict negotiation and reassignment |
+| Fleet / discovery | Membership, vehicle profiles, health and availability |
+| Communication | Versioned events, synchronization, freshness and provenance |
+| Perception | Detection, segmentation and free-space observations |
+| Fusion and localization | Multi-sensor association, pose and uncertainty |
+| World model | Local and shared maps, tracks and semantic memory |
+| Prediction | Dynamic-object and peer motion estimates |
+| Planning | Model-aware 2D/3D routes, local trajectories and replanning |
+| Decision | Candidate ranking and auditable proposals |
+| Safety | Safety evidence and deterministic RTA interface, without overriding its result |
+| Health / recovery | Fault detection and vehicle-specific fallback requests |
+| Dataset / scenario | Licensed data ingestion, normalization and replay |
+| Learning / evaluation | Model evaluation, annotation requests and controlled improvement |
 
-Simulation failures and difficult edge cases can feed annotation and retraining workflows, creating a continuous improvement loop between data, simulation, and autonomy.
+These are logical roles; an agent may run locally, at the edge, or in fleet infrastructure. Roles do not imply an implemented LLM, service, or autonomous orchestration runtime today.
 
-## Repository layout
+## Vehicle and simulator abstraction
 
-```text
-AutonomyMind/
-├── agents/
-│   ├── perception_agent/
-│   ├── sensor_fusion_agent/
-│   ├── world_model_agent/
-│   ├── localization_agent/
-│   ├── planning_agent/
-│   ├── coordination_agent/
-│   ├── decision_agent/
-│   └── safety_agent/
-│
-├── simulation/
-│   └── isaac/
-│       ├── worlds/
-│       ├── scenarios/
-│       ├── robots/
-│       ├── sensors/
-│       ├── synthetic_data/
-│       └── evaluation/
-│
-├── semantic_data/
-│   ├── semanticmap_connector/
-│   ├── annotation_schemas/
-│   ├── datasets/
-│   ├── model_registry/
-│   └── evaluation/
-│
-├── orchestration/
-│   ├── agent_registry/
-│   ├── contracts/
-│   ├── events/
-│   └── observability/
-│
-└── autonomy_ws/
-    └── src/
-        ├── autonomymind_common/
-        ├── autonomymind_perception/
-        ├── autonomymind_sensor_fusion/
-        ├── autonomymind_world_model/
-        ├── autonomymind_localization/
-        ├── autonomymind_navigation/
-        ├── autonomymind_coordination/
-        ├── autonomymind_mission/
-        ├── autonomymind_decision/
-        └── autonomymind_safety/
-```
+| Domain | Reference model / intended adapter | Status |
+|---|---|---|
+| Road vehicle fleets | Ackermann bicycle; CARLA / traffic simulation | Reference kinematics only; road rules, lanes and CARLA adapter pending |
+| Rover / mobile robot | Differential drive, omnidirectional | Reference models; Gazebo rover experiments |
+| Drone | Multirotor kinematics; Gazebo / Isaac / SITL | Reference model; live cooperative flight pending |
+| Aircraft | Fixed-wing kinematics | Reference model; dynamics and flight integration pending |
+| Other vehicles | Model registry extensions | Extension point; VTOL and maritime models pending |
 
-## Agent model
+Gazebo Harmonic is the working local simulation reference. Isaac Sim has scene/export and offline exchange assets, not a validated live closed loop. CARLA, SUMO and PX4/ArduPilot SITL are planned adapters, not bundled integrations. Docker and ROS 2 Jazzy are the initial deployment/transport baseline; amd64 and arm64 build targets do not imply hardware validation on all devices.
 
-AutonomyMind uses specialized agents with narrow contracts rather than one monolithic model controlling the full stack.
+## Data, scenarios and learning
 
-- **Perception Agent** — converts raw sensor streams into detections, semantic features, free-space estimates, and structured observations.
-- **Sensor Fusion Agent** — combines observations across cameras, LiDAR, radar, GNSS, IMU, and other sources.
-- **World Model Agent** — maintains semantic state, tracks, map context, confidence, provenance, and shared spatial memory.
-- **Localization Agent** — estimates platform state across GNSS, VIO, SLAM, and other localization sources.
-- **Planning Agent** — proposes routes, local trajectories, task plans, and recovery options.
-- **Coordination Agent** — coordinates heterogeneous robots and shared missions.
-- **Decision Agent** — ranks operational options and produces explainable recommendations.
-- **Safety Agent** — exposes deterministic safety evidence and interfaces to runtime-assurance logic; it does not replace the deterministic safety core.
+A planned Dataset & Scenario Engine will ingest licensed external data through source-specific adapters, normalize coordinate frames, time, identities, maps, tracks and provenance, and feed offline replay, evaluation and scenario generation. Waymo Open Dataset Motion is an initial research candidate for road-traffic trajectories and maps; Perception and End-to-End datasets are additional candidates. Road-traffic actors are not assumed to be cooperating autonomous vehicles. V2X datasets and synthetic cooperative scenarios can complement them.
 
-## Simulation
+Waymo ingestion is not implemented. Dataset access and use are subject to the applicable [Waymo terms](https://waymo.com/open/terms/); do not ingest or use restricted data for commercial work without appropriate permission. Keep external data, derived artifacts and credentials outside the public repository and track license/provenance per dataset. The Apache license on this code does not grant rights to third-party datasets or models.
 
-`simulation/isaac/` is the integration surface for Isaac Sim scenarios, robots, sensors, synthetic data generation, and regression evaluation.
+The SemanticMap-compatible boundary remains generic: versioned annotation requests, human review, dataset and model registry, evaluation and explicit release approval. No private implementation is bundled. Learning agents must not self-deploy unreviewed safety-critical models.
 
-The simulation layer is intended to support:
+## Current implementation and evidence
 
-- sensor simulation;
-- multi-robot scenarios;
-- synthetic perception datasets;
-- failure injection;
-- domain randomization;
-- scenario replay;
-- edge-case generation;
-- autonomy regression testing.
+| Capability | Current status |
+|---|---|
+| Contracts, Python reference runtime, ROS interfaces | Implemented |
+| Camera and LiDAR adapters, geometric fusion, reference tracker | Implemented components; full live fused planning pipeline pending |
+| Occupancy grid, A*, sampled local navigation | Reference planar planner; unknown space blocked |
+| Vehicle registry and fleet allocation | Reference kinematics, external JSON profiles, stale-member handling and pairwise conflicts; not yet integrated with live planner |
+| C++ RTA and simulation service | Reference assessment; no certified actuation authority |
+| Gazebo static assessment and mobile sensor streams | Exercised on a workstation |
+| Gazebo straight-line rover stop | Exercised on a workstation: 1.906 m advance, 44 accepted RTA assessments, LiDAR stop at 1.394 m |
+| Gazebo waypoint evasion | Experimental fixed-route regression; not a validated general planner |
+| Distributed AI orchestration, fleet-level physical cooperation | Target architecture; not yet implemented end to end |
+| Dataset adapters and road fleet simulation | Planned |
 
-Simulation assets and third-party components must retain their own licenses and redistribution terms.
+The workstation evidence is a reported reference experiment, not a safety certification or a current CI result. In particular, the rover stop was issued by the LiDAR supervisor, not an RTA rejection. No physical vehicle operation is claimed.
 
-## Semantic data and annotation
-
-`semantic_data/` defines the public integration boundary for semantic annotation and dataset workflows.
-
-The connector is intentionally decoupled from any private annotation platform implementation. It should exchange versioned contracts for:
-
-- images and sensor frames;
-- annotation requests;
-- polygons, masks, tracks, and semantic geometry;
-- review status;
-- provenance;
-- model version;
-- dataset version;
-- evaluation results.
-
-No private repository code is vendored into AutonomyMind.
-
-## Cooperative autonomy
-
-AutonomyMind is designed for heterogeneous teams:
-
-```text
-Drone Agent Stack ----+
-Rover Agent Stack ----+--> Shared World Model
-Robot Agent Stack ----+          |
-                                v
-                         Coordination Agent
-                                |
-                                v
-                           Mission Agent
-                                |
-                                v
-                      Local Decision Agents
-                                |
-                                v
-                     Deterministic Safety
-```
-
-Each platform can maintain local autonomy while contributing to a shared world model and coordinated mission state.
-
-## Safety boundary
-
-AI agents may:
-
-- propose;
-- rank;
-- explain;
-- predict;
-- coordinate;
-- generate candidate plans.
-
-AI agents must not bypass deterministic runtime-assurance checks.
-
-The current `autonomymind_decision` core remains the operational decision and evidence boundary for the public development baseline.
-
-## Reference vertical
-
-A first executable vertical is included:
-
-```text
-Synthetic / Isaac-compatible frame
-        ↓
-Perception Agent
-        ↓
-Observation
-        ↓
-Sensor Fusion Agent
-        ↓
-Fused Observation
-        ↓
-World Model Agent
-        ↓
-WorldState
-        ↓
-Planning Agent
-        ↓
-Planning Proposal
-        ↓
-Decision Agent
-        ↓
-AgentProposal
-        ↓
-Deterministic Safety
-        ↓
-SafetyDecision
-        ↓
-optional annotation request when confidence is low
-```
-
-Run it entirely in Docker:
+## Quick start
 
 ```bash
+docker compose run --build --rm test
 docker compose run --rm contract-check
-docker compose run --rm test
+docker compose run --rm ros-test
 docker compose run --rm demo
 docker compose run --rm dynamic-demo
 docker compose run --rm cooperative-demo
-docker compose run --rm ros-test
-```
-
-For WSL / Ubuntu amd64:
-
-```bash
-export AUTONOMYMIND_PLATFORM=linux/amd64
-docker compose run --rm test
-```
-
-For Jetson Orin / Thor arm64:
-
-```bash
-export AUTONOMYMIND_PLATFORM=linux/arm64
-docker compose run --rm test
-```
-
-Architecture diagrams: [docs/architecture.md](docs/architecture.md)  
-Platform matrix: [docs/platforms.md](docs/platforms.md)  
-Test strategy: [docs/testing.md](docs/testing.md)  
-Isaac bridge: [simulation/isaac/BRIDGE.md](simulation/isaac/BRIDGE.md)  
-Real perception: [docs/perception.md](docs/perception.md)  
-Jetson deployment: [deploy/jetson/README.md](deploy/jetson/README.md)
-
-## Status
-
-AutonomyMind is under active development. The public reference vertical is intentionally simple and deterministic so contracts, Docker deployment, CI, simulation integration, and safety boundaries can evolve without hiding behavior behind a monolithic model.
-
-## License
-
-AutonomyMind is distributed under the Apache License 2.0. See `LICENSE` and `NOTICE`.
-
-
-## v0.1 dynamic avoidance milestone
-
-The executable v0.1 reference scenario demonstrates:
-
-```text
-moving 3D track
-    ↓
-dynamic world model
-    ↓
-closest-approach / TTC risk
-    ↓
-GO / BRAKE / LEFT / RIGHT candidates
-    ↓
-deterministic candidate safety checks
-    ↓
-decision ranking
-    ↓
-validated maneuver
-    ↓
-JSONL episode trace
-```
-
-Run:
-
-```bash
-docker compose run --rm dynamic-demo
-```
-
-The trace is written to `semantic_data/outbox/dynamic_trace.jsonl`.
-
-
-## Cooperative autonomy milestone
-
-The cooperative reference scenario demonstrates:
-
-```text
-Drone local state ----+
-                      +--> Shared World Model
-Rover local state ----+
-          |
-          +--> Shared tracks
-          +--> Mission tasks
-                    |
-                    v
-            Coordination Agent
-          /                     \
- capability-based tasking   inter-robot conflict prediction
-          \                     /
-                    v
-             coordination directives
-```
-
-Run:
-
-```bash
-docker compose run --rm cooperative-demo
-```
-
-The current public policy is deliberately transparent: task assignment is capability- and distance-based, while predicted robot-to-robot conflicts generate explicit yield directives. Local robot safety remains independent and deterministic.
-
-
-
-## Mission dashboard demo
-
-A presentation-ready deterministic demo combines the cooperative drone/rover scenario with dynamic obstacle avoidance, candidate safety evidence, task allocation, and replay.
-
-Start the complete stack:
-
-```bash
 docker compose -f compose.demo.yaml up --build
 ```
 
-Then open:
+Open the fixture replay dashboard at http://localhost:8080. Keep demo services on trusted local networks. For Gazebo sensor and movement experiments, see [simulation/gazebo/README.md](simulation/gazebo/README.md). These experiments are simulation-only and must not be connected to physical actuators.
 
-```text
-http://localhost:8080
-```
+For platform-specific builds set `AUTONOMYMIND_PLATFORM=linux/amd64` or `linux/arm64` as appropriate.
 
-The mission container first writes a versioned JSONL trace. The dashboard then replays each mission step and shows:
+## Repository guide
 
-- drone and rover state;
-- shared tracks;
-- task assignments;
-- coordination conflicts/directives;
-- GO / BRAKE / LEFT / RIGHT candidates;
-- candidate priority and confidence;
-- deterministic safety status;
-- selected maneuver;
-- raw trace evidence.
+| Path | Purpose |
+|---|---|
+| `agents/` | Agent role definitions |
+| `src/autonomymind_runtime/` | Reference runtime, navigation, vehicle models and fleet core |
+| `config/vehicles/` | Illustrative external vehicle profiles |
+| `orchestration/` | Contracts, registry, events and observability |
+| `autonomy_ws/src/` | ROS interfaces, perception, fusion, tracking and C++ decision/RTA |
+| `simulation/gazebo/` | Validated reference scenarios and experimental movement |
+| `simulation/isaac/` | Scene assets, export and offline exchange |
+| `semantic_data/` | Annotation and dataset integration boundary |
+| `tests/` | Unit, integration and end-to-end regression tests |
 
-The checked-in scenario is deterministic and CI-friendly. Isaac Sim can replace the fixture as the upstream sensor/world source through the existing Isaac integration boundary without changing the trace or dashboard contract.
+## Documentation
+
+- [Architecture and roadmap](docs/architecture.md)
+- [Generic navigation](docs/generic-navigation.md)
+- [Multi-vehicle core](docs/multi-vehicle-core.md)
+- [Dataset and scenario engine design](docs/dataset-scenario-engine.md)
+- [Platform matrix](docs/platforms.md)
+- [Testing strategy](docs/testing.md)
+- [Vehicle RTA](docs/vehicle-rta.md)
+- [Isaac bridge](simulation/isaac/BRIDGE.md)
+- [Perception](docs/perception.md)
+- [Jetson deployment](deploy/jetson/README.md)
+
+## License
+
+Repository code is distributed under Apache License 2.0; see LICENSE and NOTICE. Third-party components, datasets and models retain their own terms.
