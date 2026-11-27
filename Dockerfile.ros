@@ -9,7 +9,8 @@ COPY autonomy_ws/src/autonomymind_interfaces /workspace/src/autonomymind_interfa
 COPY autonomy_ws/src/autonomymind_decision /workspace/src/autonomymind_decision
 COPY autonomy_ws/src/autonomymind_perception /workspace/src/autonomymind_perception
 COPY autonomy_ws/src/autonomymind_sensor_fusion /workspace/src/autonomymind_sensor_fusion
+COPY autonomy_ws/src/autonomymind_tracking /workspace/src/autonomymind_tracking
 RUN source /opt/ros/jazzy/setup.bash && \
-    colcon build --packages-select autonomymind_interfaces autonomymind_perception autonomymind_sensor_fusion autonomymind_decision \
+    colcon build --packages-select autonomymind_interfaces autonomymind_perception autonomymind_sensor_fusion autonomymind_tracking autonomymind_decision \
       --cmake-args -DBUILD_TESTING=ON
-CMD ["bash","-lc","source /opt/ros/jazzy/setup.bash && source /workspace/install/setup.bash && colcon test --packages-select autonomymind_interfaces autonomymind_perception autonomymind_sensor_fusion autonomymind_decision --event-handlers console_direct+ && colcon test-result --verbose"]
+CMD ["bash","-lc","source /opt/ros/jazzy/setup.bash && source /workspace/install/setup.bash && colcon test --packages-select autonomymind_interfaces autonomymind_perception autonomymind_sensor_fusion autonomymind_tracking autonomymind_decision --event-handlers console_direct+ && colcon test-result --verbose"]
