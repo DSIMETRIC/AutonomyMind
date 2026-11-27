@@ -1,0 +1,69 @@
+name: AutonomyMind Decision CI
+
+on:
+  push:
+    paths:
+      - 'autonomy_ws/src/autonomymind_decision/**'
+      - '.github/workflows/autonomymind-decision-ci.yml'
+  pull_request:
+    paths:
+      - 'autonomy_ws/src/autonomymind_decision/**'
+      - '.github/workflows/autonomymind-decision-ci.yml'
+
+jobs:
+  deterministic-core:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - name: Release-style tests + synthetic rosbag E2E
+        run: bash autonomy_ws/src/autonomymind_decision/tools/test_pipeline.sh
+      - name: Install ROS 2 Jazzy tooling
+        uses: ros-tooling/setup-ros@v0.7
+        with:
+          required-ros-distributions: jazzy
+      - name: ROS 2 Jazzy package build + CTest
+        shell: bash
+        run: |
+          set -eo pipefail
+          # ROS environment scripts probe unset variables, so enable nounset only
+          # after sourcing the Jazzy environment.
+          source /opt/ros/jazzy/setup.bash
+          rm -rf ros_ws
+          mkdir -p ros_ws/src
+          ln -s "$GITHUB_WORKSPACE/autonomy_ws/src/autonomymind_decision" \
+            ros_ws/src/autonomymind_decision
+          cd ros_ws
+          colcon build \
+            --packages-select autonomymind_decision \
+            --cmake-args -DBUILD_TESTING=ON
+          source install/setup.bash
+          colcon test --packages-select autonomymind_decision --event-handlers console_direct+
+          colcon test-result --verbose
+      - name: Install dashboard browser
+        run: |
+          npm install --no-save playwright@1.55.0
+          npx playwright install --with-deps chromium
+      - name: Chromium dashboard DOM + screenshot E2E
+        run: |
+          node autonomy_ws/src/autonomymind_decision/test/test_dashboard_browser.mjs \
+            autonomy_ws/src/autonomymind_decision/dashboard \
+            autonomy_ws/src/autonomymind_decision/.pipeline_build/e2e/evidence.json \
+            autonomy_ws/src/autonomymind_decision/.pipeline_build/e2e/dashboard.png
+      - name: Upload dashboard screenshot
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: autonomymind-decision-dashboard
+          path: autonomy_ws/src/autonomymind_decision/.pipeline_build/e2e/dashboard.png
+          if-no-files-found: warn
+
+  sanitizers:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - name: ASan + UBSan tests + synthetic rosbag E2E
+        env:
+          SANITIZE: '1'
+          ASAN_OPTIONS: detect_leaks=1:halt_on_error=1
+          UBSAN_OPTIONS: halt_on_error=1:print_stacktrace=1
+        run: bash autonomy_ws/src/autonomymind_decision/tools/test_pipeline.sh
