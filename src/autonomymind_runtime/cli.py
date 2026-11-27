@@ -1,6 +1,7 @@
 import argparse, json, pathlib
 from .isaac_adapter import IsaacScenarioAdapter
 from .pipeline import AutonomyPipeline
+from .dynamic_pipeline import DynamicAvoidancePipeline
 
 def contract_check():
     root=pathlib.Path("/workspace/orchestration/contracts")
@@ -26,16 +27,33 @@ def demo(scenario: str, outbox: str):
     if not results[-1]["safety_decision"]["deterministic"]:
         raise SystemExit(2)
 
+def dynamic_demo(scenario: str, trace: str):
+    data=json.loads(pathlib.Path(scenario).read_text(encoding="utf-8"))
+    frames=data.get("frames",[])
+    if not frames:
+        raise SystemExit("dynamic scenario contains no frames")
+    pipe=DynamicAvoidancePipeline(trace)
+    results=[pipe.step(f) for f in frames]
+    print(json.dumps(results,indent=2,sort_keys=True))
+    final=results[-1]
+    if not final["selected_safety"]["accepted"]:
+        raise SystemExit(3)
+
 def main():
     p=argparse.ArgumentParser()
     sub=p.add_subparsers(dest="cmd",required=True)
     d=sub.add_parser("demo")
     d.add_argument("--scenario",required=True)
     d.add_argument("--outbox",default="/tmp/autonomymind-outbox")
+    dd=sub.add_parser("dynamic-demo")
+    dd.add_argument("--scenario",required=True)
+    dd.add_argument("--trace",default="/tmp/autonomymind-dynamic-trace.jsonl")
     sub.add_parser("contract-check")
     a=p.parse_args()
     if a.cmd=="demo":
         demo(a.scenario,a.outbox)
+    elif a.cmd=="dynamic-demo":
+        dynamic_demo(a.scenario,a.trace)
     else:
         contract_check()
 
