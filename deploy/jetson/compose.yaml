@@ -32,3 +32,25 @@ services:
         ros2 run autonomymind_perception lidar_scan_adapter --ros-args \
           -p input_topic:=${LIDAR_SCAN_TOPIC:-/scan} \
           -p output_topic:=/autonomymind/observations/lidar
+
+
+  fusion:
+    build:
+      context: ../..
+      dockerfile: Dockerfile.ros
+    image: autonomymind/ros:jazzy-dev
+    platform: linux/arm64
+    network_mode: host
+    volumes:
+      - ${AUTONOMYMIND_CALIBRATION_FILE:-../../autonomy_ws/src/autonomymind_sensor_fusion/config/example_calibration.json}:/config/calibration.json:ro
+    command:
+      - bash
+      - -lc
+      - |
+        source /opt/ros/jazzy/setup.bash
+        source /workspace/install/setup.bash
+        ros2 run autonomymind_sensor_fusion camera_lidar_fusion --ros-args \
+          -p calibration_file:=/config/calibration.json \
+          -p camera_topic:=/autonomymind/observations/camera \
+          -p lidar_topic:=/autonomymind/observations/lidar \
+          -p output_topic:=/autonomymind/observations/fused
