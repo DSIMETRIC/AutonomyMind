@@ -1,0 +1,34 @@
+services:
+  rta:
+    build:
+      context: ../..
+      dockerfile: Dockerfile.ros
+    image: autonomymind/ros-gazebo-base:dev
+    environment:
+      ROS_DOMAIN_ID: "74"
+      ROS_LOCALHOST_ONLY: "0"
+    command: ["bash","-lc","source /opt/ros/jazzy/setup.bash && source /workspace/install/setup.bash && ros2 run autonomymind_decision simulation_rta_node --ros-args -r __ns:=/autonomymind_sim"]
+  gazebo:
+    build:
+      context: ../..
+      dockerfile: simulation/gazebo/Dockerfile
+    image: autonomymind/gazebo:dev
+    environment:
+      ROS_DOMAIN_ID: "74"
+      GZ_PARTITION: autonomymind_reference
+    command: ["bash","-lc","source /opt/ros/jazzy/setup.bash && gz sim -s -r /gazebo/worlds/cooperative.sdf"]
+  bridge:
+    image: autonomymind/gazebo:dev
+    environment:
+      ROS_DOMAIN_ID: "74"
+      GZ_PARTITION: autonomymind_reference
+    command: ["bash","-lc","source /opt/ros/jazzy/setup.bash && ros2 run ros_gz_bridge parameter_bridge --ros-args -p config_file:=/gazebo/bridge.yaml"]
+    depends_on: [gazebo]
+  probe:
+    image: autonomymind/gazebo:dev
+    environment:
+      ROS_DOMAIN_ID: "74"
+    command: ["bash","-lc","source /opt/ros/jazzy/setup.bash && source /workspace/install/setup.bash && python3 /gazebo/probe.py"]
+    depends_on: [bridge, rta]
+    volumes:
+      - ./outbox:/gazebo/outbox
