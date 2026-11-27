@@ -1,0 +1,15 @@
+<?xml version="1.0"?>
+<package format="3">
+  <name>autonomymind_perception</name>
+  <version>0.1.0</version>
+  <description>ROS 2 perception adapters that convert detector and range-sensor outputs into AutonomyMind Observation messages.</description>
+  <maintainer email="dev@dsimetric.com">Dsimetric</maintainer>
+  <license>Apache-2.0</license>
+  <buildtool_depend>ament_python</buildtool_depend>
+  <exec_depend>rclpy</exec_depend>
+  <exec_depend>sensor_msgs</exec_depend>
+  <exec_depend>vision_msgs</exec_depend>
+  <exec_depend>autonomymind_interfaces</exec_depend>
+  <test_depend>ament_pytest</test_depend>
+  <export><build_type>ament_python</build_type></export>
+</package>
