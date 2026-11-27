@@ -55,13 +55,17 @@ class Worker(Node):
             self.get_logger().error(f"event rejected: {type(exc).__name__}: {exc}")
 
 def main():
-    p=argparse.ArgumentParser();p.add_argument("--id",required=True);p.add_argument("--role",choices=ROLES,required=True);p.add_argument("--output",default="/outbox/dds_pilot.json");p.add_argument("--model-config");a=p.parse_args()
+    p=argparse.ArgumentParser();p.add_argument("--id",required=True);p.add_argument("--role",choices=ROLES,required=True);p.add_argument("--output",default="/outbox/dds_pilot.json");p.add_argument("--model-config");p.add_argument("--reasoning-config");a=p.parse_args()
     if not a.id.replace("_","").isalnum():raise ValueError("invalid node ID")
     ranker=None
     if a.model_config:
         if a.role!="coordination":raise ValueError("model configuration requires coordination role")
         from .onnx_ranker import load_ranker
         ranker=load_ranker(json.loads(Path(a.model_config).read_text()))
+    if a.reasoning_config:
+        if a.role!="coordination" or a.model_config:raise ValueError("choose one coordination backend")
+        from .local_reasoning import load_reasoning_ranker
+        ranker=load_reasoning_ranker(json.loads(Path(a.reasoning_config).read_text()))
     rclpy.init();n=Worker(a.id,a.role,a.output,ranker)
     try:rclpy.spin(n)
     finally:n.destroy_node();rclpy.shutdown()

@@ -1,0 +1,17 @@
+# Overlay on compose.agents.host.yaml. Uses an operator-managed loopback Ollama server.
+services:
+  coordination:
+    command: ["python3","-m","autonomymind_runtime.dds_agent","--id","coordinator","--role","coordination","--reasoning-config","/config/llm.json"]
+    volumes: ["./semantic_data/outbox/reasoning:/config:ro"]
+  vision:
+    image: autonomymind/agents:dev
+    network_mode: host
+    ipc: host
+    environment:
+      ROS_DOMAIN_ID: "${AUTONOMYMIND_AGENT_DOMAIN:-79}"
+    profiles: ["vision"]
+    command: ["python3","-m","autonomymind_runtime.vlm_agent","--config","/config/vlm.json","--image","/input/frame.jpg","--output","/outbox/vlm_scene.json"]
+    volumes:
+      - ./semantic_data/outbox/reasoning:/config:ro
+      - ./semantic_data/outbox/vision_input:/input:ro
+      - ./semantic_data/outbox:/outbox

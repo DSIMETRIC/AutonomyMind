@@ -153,6 +153,10 @@ The [advisory model backend interface](docs/model-backends.md) introduces interc
 
 A CPU ONNX backend ranks eligible fleet members using a synthetic-trained reference utility model, with verified artifact digest and advisory evidence. See [AI coordination](docs/ai-coordination.md). No learned production policy or live vehicle control is claimed; execution remains to be verified.
 
+## Experimental local LLM / VLM agents
+
+Optional loopback model-server adapters support LLM advisory ranking in the DDS coordinator and VLM semantic scene reports. Models are operator-provided; no learned model execution has been verified. See [local reasoning](docs/local-reasoning.md).
+
 ## Documentation
 
 - [Architecture and roadmap](docs/architecture.md)
