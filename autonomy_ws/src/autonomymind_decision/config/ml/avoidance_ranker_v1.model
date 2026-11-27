@@ -1,0 +1,14 @@
+model.name=autonomymind_avoidance_ranker
+model.version=1
+feature.schema=rta-safe-v1
+weight.separation=3.0
+weight.terrain=0.20
+weight.speed_margin=0.80
+weight.vertical_margin=0.30
+weight.accel_margin=0.70
+weight.jerk_margin=0.40
+weight.yaw_margin=0.50
+weight.bank_margin=0.50
+bias.left=0.00
+bias.right=0.05
+bias.climb=-0.10
