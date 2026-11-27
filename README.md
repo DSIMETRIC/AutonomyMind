@@ -125,6 +125,16 @@ For platform-specific builds set `AUTONOMYMIND_PLATFORM=linux/amd64` or `linux/a
 | `semantic_data/` | Annotation and dataset integration boundary |
 | `tests/` | Unit, integration and end-to-end regression tests |
 
+## Industrial pilot — AutonomyMind Fleet
+
+The first product-oriented milestone is an offline, configurable inspection mission replay with task dependencies, capability allocation, expiring offers and reassignment. It includes aerial, ground and road-logistics members. Synthetic completion events are not physical execution or AI inference.
+
+```bash
+docker compose run --build --rm industrial-pilot
+```
+
+See [industrial pilot and acceptance gates](docs/industrial-pilot.md).
+
 ## Documentation
 
 - [Architecture and roadmap](docs/architecture.md)

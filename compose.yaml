@@ -59,3 +59,14 @@ services:
       - cooperative-demo
       - --scenario
       - /workspace/simulation/isaac/scenarios/cooperative_drone_rover.json
+
+  industrial-pilot:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: autonomymind/runtime:dev
+    platform: ${AUTONOMYMIND_PLATFORM:-linux/amd64}
+    entrypoint: ["python","-m","autonomymind_runtime.industrial_pilot"]
+    command: ["--scenario","/workspace/simulation/pilots/industrial_inspection.json","--output","/workspace/semantic_data/outbox/industrial_pilot.json"]
+    volumes:
+      - ./semantic_data/outbox:/workspace/semantic_data/outbox

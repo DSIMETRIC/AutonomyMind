@@ -57,6 +57,8 @@ jobs:
         run: docker compose run --rm contract-check
       - name: Reference demo
         run: docker compose run --rm demo
+      - name: Industrial mission coordination replay
+        run: docker compose run --rm industrial-pilot
 
   vision-cpu-tests:
     runs-on: ubuntu-24.04

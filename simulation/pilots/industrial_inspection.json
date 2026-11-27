@@ -1,0 +1,408 @@
+{
+  "id": "industrial-inspection-reference",
+  "coordination": {
+    "max_age_s": 2,
+    "lease_s": 10,
+    "horizon_s": 5,
+    "margin_m": 0.3
+  },
+  "tasks": [
+    {
+      "id": "survey",
+      "required": [
+        "aerial_inspection"
+      ],
+      "goal": [
+        0,
+        0,
+        4
+      ],
+      "priority": 100
+    },
+    {
+      "id": "inspect",
+      "required": [
+        "ground_inspection"
+      ],
+      "goal": [
+        2,
+        2,
+        0
+      ],
+      "priority": 80,
+      "dependencies": [
+        "survey"
+      ]
+    },
+    {
+      "id": "deliver",
+      "required": [
+        "road_logistics"
+      ],
+      "goal": [
+        4,
+        6,
+        0
+      ],
+      "priority": 50,
+      "dependencies": [
+        "inspect"
+      ]
+    }
+  ],
+  "events": [
+    {
+      "t": 0,
+      "telemetry": [
+        {
+          "id": "survey-a",
+          "capabilities": [
+            "aerial_inspection"
+          ],
+          "position": [
+            0,
+            0,
+            4
+          ],
+          "velocity": [
+            0,
+            0,
+            0
+          ],
+          "radius_m": 0.6,
+          "uncertainty_m": 0.2,
+          "timestamp": 0
+        },
+        {
+          "id": "survey-b",
+          "capabilities": [
+            "aerial_inspection"
+          ],
+          "position": [
+            5,
+            0,
+            4
+          ],
+          "velocity": [
+            0,
+            0,
+            0
+          ],
+          "radius_m": 0.6,
+          "uncertainty_m": 0.2,
+          "timestamp": 0
+        },
+        {
+          "id": "ground-a",
+          "capabilities": [
+            "ground_inspection"
+          ],
+          "position": [
+            0,
+            2,
+            0
+          ],
+          "velocity": [
+            0,
+            0,
+            0
+          ],
+          "radius_m": 0.5,
+          "uncertainty_m": 0.1,
+          "timestamp": 0
+        },
+        {
+          "id": "transport-a",
+          "capabilities": [
+            "road_logistics"
+          ],
+          "position": [
+            0,
+            6,
+            0
+          ],
+          "velocity": [
+            0,
+            0,
+            0
+          ],
+          "radius_m": 2.6,
+          "uncertainty_m": 0.2,
+          "timestamp": 0
+        }
+      ]
+    },
+    {
+      "t": 3,
+      "telemetry": [
+        {
+          "id": "survey-b",
+          "capabilities": [
+            "aerial_inspection"
+          ],
+          "position": [
+            5,
+            0,
+            4
+          ],
+          "velocity": [
+            0,
+            0,
+            0
+          ],
+          "radius_m": 0.6,
+          "uncertainty_m": 0.2,
+          "timestamp": 3
+        },
+        {
+          "id": "ground-a",
+          "capabilities": [
+            "ground_inspection"
+          ],
+          "position": [
+            0,
+            2,
+            0
+          ],
+          "velocity": [
+            0,
+            0,
+            0
+          ],
+          "radius_m": 0.5,
+          "uncertainty_m": 0.1,
+          "timestamp": 3
+        },
+        {
+          "id": "transport-a",
+          "capabilities": [
+            "road_logistics"
+          ],
+          "position": [
+            0,
+            6,
+            0
+          ],
+          "velocity": [
+            0,
+            0,
+            0
+          ],
+          "radius_m": 2.6,
+          "uncertainty_m": 0.2,
+          "timestamp": 3
+        }
+      ],
+      "completions": [
+        {
+          "task": "survey",
+          "member": "survey-a"
+        }
+      ]
+    },
+    {
+      "t": 4,
+      "telemetry": [
+        {
+          "id": "survey-b",
+          "capabilities": [
+            "aerial_inspection"
+          ],
+          "position": [
+            5,
+            0,
+            4
+          ],
+          "velocity": [
+            0,
+            0,
+            0
+          ],
+          "radius_m": 0.6,
+          "uncertainty_m": 0.2,
+          "timestamp": 4
+        },
+        {
+          "id": "ground-a",
+          "capabilities": [
+            "ground_inspection"
+          ],
+          "position": [
+            0,
+            2,
+            0
+          ],
+          "velocity": [
+            0,
+            0,
+            0
+          ],
+          "radius_m": 0.5,
+          "uncertainty_m": 0.1,
+          "timestamp": 4
+        },
+        {
+          "id": "transport-a",
+          "capabilities": [
+            "road_logistics"
+          ],
+          "position": [
+            0,
+            6,
+            0
+          ],
+          "velocity": [
+            0,
+            0,
+            0
+          ],
+          "radius_m": 2.6,
+          "uncertainty_m": 0.2,
+          "timestamp": 4
+        }
+      ],
+      "completions": [
+        {
+          "task": "survey",
+          "member": "survey-b"
+        }
+      ]
+    },
+    {
+      "t": 5,
+      "telemetry": [
+        {
+          "id": "survey-b",
+          "capabilities": [
+            "aerial_inspection"
+          ],
+          "position": [
+            5,
+            0,
+            4
+          ],
+          "velocity": [
+            0,
+            0,
+            0
+          ],
+          "radius_m": 0.6,
+          "uncertainty_m": 0.2,
+          "timestamp": 5
+        },
+        {
+          "id": "ground-a",
+          "capabilities": [
+            "ground_inspection"
+          ],
+          "position": [
+            0,
+            2,
+            0
+          ],
+          "velocity": [
+            0,
+            0,
+            0
+          ],
+          "radius_m": 0.5,
+          "uncertainty_m": 0.1,
+          "timestamp": 5
+        },
+        {
+          "id": "transport-a",
+          "capabilities": [
+            "road_logistics"
+          ],
+          "position": [
+            0,
+            6,
+            0
+          ],
+          "velocity": [
+            0,
+            0,
+            0
+          ],
+          "radius_m": 2.6,
+          "uncertainty_m": 0.2,
+          "timestamp": 5
+        }
+      ],
+      "completions": [
+        {
+          "task": "inspect",
+          "member": "ground-a"
+        }
+      ]
+    },
+    {
+      "t": 6,
+      "telemetry": [
+        {
+          "id": "survey-b",
+          "capabilities": [
+            "aerial_inspection"
+          ],
+          "position": [
+            5,
+            0,
+            4
+          ],
+          "velocity": [
+            0,
+            0,
+            0
+          ],
+          "radius_m": 0.6,
+          "uncertainty_m": 0.2,
+          "timestamp": 6
+        },
+        {
+          "id": "ground-a",
+          "capabilities": [
+            "ground_inspection"
+          ],
+          "position": [
+            0,
+            2,
+            0
+          ],
+          "velocity": [
+            0,
+            0,
+            0
+          ],
+          "radius_m": 0.5,
+          "uncertainty_m": 0.1,
+          "timestamp": 6
+        },
+        {
+          "id": "transport-a",
+          "capabilities": [
+            "road_logistics"
+          ],
+          "position": [
+            0,
+            6,
+            0
+          ],
+          "velocity": [
+            0,
+            0,
+            0
+          ],
+          "radius_m": 2.6,
+          "uncertainty_m": 0.2,
+          "timestamp": 6
+        }
+      ],
+      "completions": [
+        {
+          "task": "deliver",
+          "member": "transport-a"
+        }
+      ]
+    }
+  ]
+}
