@@ -55,7 +55,10 @@ def main():
             if any(latest[k][0].header.frame_id!="world_enu" for k in ("rover","drone","obstacle")):status="frame";break
             if max(abs(stamp(latest[k][0])-stamp(ego)) for k in ("drone","obstacle","scan"))>.35:status="sync";break
             raw_z=p.z
-            if -1e-6<=p.z<0:p.z=0.
+            # Flat reference simulation only: bounded contact-solver tolerance.
+            # Do not normalize larger negative heights or change the RTA profile.
+            if -1e-4 <= p.z < 0.0:
+                p.z = 0.0
             yaw=yaw_of(q)
             tx,ty=route[stage]
             if math.hypot(tx-p.x,ty-p.y)<.35:
