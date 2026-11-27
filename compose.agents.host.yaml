@@ -1,0 +1,27 @@
+# Standalone local Linux development profile; intentionally shares host network and IPC.
+name: autonomymind-agents-host
+x-agent: &agent
+  image: autonomymind/agents:dev
+  network_mode: host
+  ipc: host
+  environment:
+    ROS_DOMAIN_ID: "${AUTONOMYMIND_AGENT_DOMAIN:-79}"
+services:
+  mission:
+    <<: *agent
+    build:
+      context: .
+      dockerfile: Dockerfile.agents
+    command: ["python3","-m","autonomymind_runtime.dds_agent","--id","mission","--role","mission"]
+  coordination:
+    <<: *agent
+    command: ["python3","-m","autonomymind_runtime.dds_agent","--id","coordinator","--role","coordination"]
+  evaluation:
+    <<: *agent
+    command: ["python3","-m","autonomymind_runtime.dds_agent","--id","evaluation","--role","evaluation"]
+    volumes: ["./semantic_data/outbox:/outbox"]
+  probe:
+    <<: *agent
+    profiles: ["test"]
+    entrypoint: ["/ros_entrypoint.sh","python3","-m","autonomymind_runtime.dds_probe"]
+    command: ["--scenario","/workspace/pilots/industrial_inspection.json"]

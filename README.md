@@ -143,6 +143,12 @@ The first executable in-process agent kernel supports registration, capabilities
 
 Independent mission, coordination and evaluation containers exchange versioned events and capability heartbeats via ROS 2 DDS. This is an offline mission replay, not live robot control or distributed AI inference. See [Distributed Agent Runtime](docs/distributed-agents.md) for build, probe and missing-peer tests.
 
+## Distributed runtime — measured local result
+
+The DDS reference workers passed an end-to-end mission replay on a Linux workstation using host networking and IPC (domain 79): 3/3 synthetic tasks, 4 members, 1 reassignment and 1 rejected stale completion. Use the new standalone host development profile `compose.agents.host.yaml`; see [distributed agents](docs/distributed-agents.md). Multi-host operation and physical cooperation remain unvalidated.
+
+The [advisory model backend interface](docs/model-backends.md) introduces interchangeable model registration and validated candidate ranking. Only a deterministic reference ranker is supplied; learned inference and DDS integration remain pending.
+
 ## Documentation
 
 - [Architecture and roadmap](docs/architecture.md)
