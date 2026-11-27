@@ -1,0 +1,16 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://autonomymind.dev/schemas/annotation_request.schema.json",
+  "title": "AnnotationRequest",
+  "type": "object",
+  "required": ["schema_version", "request_type", "frame", "observation", "reason", "review_status"],
+  "properties": {
+    "schema_version": {"type": "string", "const": "1.0"},
+    "request_type": {"type": "string", "const": "annotation"},
+    "frame": {"type": "object"},
+    "observation": {"type": "object"},
+    "reason": {"type": "string"},
+    "review_status": {"type": "string", "enum": ["pending", "accepted", "corrected", "rejected"]}
+  },
+  "additionalProperties": false
+}
