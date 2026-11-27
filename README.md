@@ -157,6 +157,10 @@ A CPU ONNX backend ranks eligible fleet members using a synthetic-trained refere
 
 Optional loopback model-server adapters support LLM advisory ranking in the DDS coordinator and VLM semantic scene reports. Models are operator-provided; no learned model execution has been verified. See [local reasoning](docs/local-reasoning.md).
 
+## Shared Semantic World Model
+
+A DDS evidence service now accepts bounded, timestamped metric observations and member states, keeps VLM semantic reports separate, and exposes provenance-aware snapshots with expiry. See [shared world model](docs/shared-world.md). Live sensor producers, cross-source fusion, map exchange and planning consumption remain pending; integration probe not yet executed.
+
 ## Documentation
 
 - [Architecture and roadmap](docs/architecture.md)
