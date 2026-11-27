@@ -5,6 +5,7 @@ COPY src/ /workspace/src/
 COPY tests/ /workspace/tests/
 COPY simulation/ /workspace/simulation/
 COPY semantic_data/ /workspace/semantic_data/
+COPY orchestration/ /workspace/orchestration/
 COPY scripts/ /workspace/scripts/
 RUN chmod +x /workspace/scripts/*.sh
 ENTRYPOINT ["python","-m","autonomymind_runtime.cli"]

@@ -1,0 +1,12 @@
+FROM ros:jazzy-ros-base
+SHELL ["/bin/bash","-c"]
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    build-essential python3-colcon-common-extensions && \
+    rm -rf /var/lib/apt/lists/*
+WORKDIR /workspace
+COPY autonomy_ws/src/autonomymind_interfaces /workspace/src/autonomymind_interfaces
+COPY autonomy_ws/src/autonomymind_decision /workspace/src/autonomymind_decision
+RUN source /opt/ros/jazzy/setup.bash && \
+    colcon build --packages-select autonomymind_interfaces autonomymind_decision \
+      --cmake-args -DBUILD_TESTING=ON
+CMD ["bash","-lc","source /opt/ros/jazzy/setup.bash && source /workspace/install/setup.bash && colcon test --packages-select autonomymind_interfaces autonomymind_decision --event-handlers console_direct+ && colcon test-result --verbose"]

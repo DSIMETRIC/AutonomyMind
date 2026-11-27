@@ -8,6 +8,7 @@ services:
     command: ["demo","--scenario","/workspace/simulation/isaac/scenarios/obstacle_demo.json","--outbox","/workspace/semantic_data/outbox"]
     volumes:
       - ./semantic_data/outbox:/workspace/semantic_data/outbox
+
   test:
     build:
       context: .
@@ -15,6 +16,7 @@ services:
     image: autonomymind/runtime:dev
     platform: ${AUTONOMYMIND_PLATFORM:-linux/amd64}
     entrypoint: ["/workspace/scripts/run_tests.sh"]
+
   contract-check:
     build:
       context: .
@@ -22,3 +24,10 @@ services:
     image: autonomymind/runtime:dev
     platform: ${AUTONOMYMIND_PLATFORM:-linux/amd64}
     command: ["contract-check"]
+
+  ros-test:
+    build:
+      context: .
+      dockerfile: Dockerfile.ros
+    image: autonomymind/ros:jazzy-dev
+    platform: ${AUTONOMYMIND_PLATFORM:-linux/amd64}
