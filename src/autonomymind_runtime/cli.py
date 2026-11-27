@@ -5,6 +5,7 @@ from .dynamic_pipeline import DynamicAvoidancePipeline
 from .cooperative_pipeline import CooperativePipeline
 from .mission_demo import run_mission
 from .replay import summarize_trace
+from .isaac_exchange import run_exchange_jsonl
 
 def contract_check():
     root=pathlib.Path("/workspace/orchestration/contracts")
@@ -74,6 +75,9 @@ def main():
     dd=sub.add_parser("dynamic-demo")
     dd.add_argument("--scenario",required=True)
     dd.add_argument("--trace",default="/tmp/autonomymind-dynamic-trace.jsonl")
+    ex=sub.add_parser("isaac-exchange")
+    ex.add_argument("--input",required=True)
+    ex.add_argument("--trace",required=True)
     sub.add_parser("contract-check")
     a=p.parse_args()
     if a.cmd=="demo":
@@ -84,6 +88,8 @@ def main():
         cooperative_demo(a.scenario)
     elif a.cmd=="mission-demo":
         mission_demo(a.scenario,a.trace)
+    elif a.cmd=="isaac-exchange":
+        print(json.dumps({"events":run_exchange_jsonl(a.input,a.trace),"summary":summarize_trace(a.trace)},indent=2))
     elif a.cmd=="replay-summary":
         replay_summary(a.trace)
     else:

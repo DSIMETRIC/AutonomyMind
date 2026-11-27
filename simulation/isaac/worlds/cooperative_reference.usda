@@ -1,0 +1,109 @@
+#usda 1.0
+(
+    defaultPrim = "World"
+    metersPerUnit = 1
+    upAxis = "Z"
+    startTimeCode = 0
+    endTimeCode = 240
+    timeCodesPerSecond = 24
+)
+def Xform "World"
+{
+    def PhysicsScene "PhysicsScene"
+    {
+        vector3f physics:gravityDirection = (0, 0, -1)
+        float physics:gravityMagnitude = 9.81
+    }
+    def DistantLight "Sun"
+    {
+        float inputs:intensity = 2500
+        float inputs:angle = 0.5
+        double3 xformOp:rotateXYZ = (35, -25, 0)
+        uniform token[] xformOpOrder = ["xformOp:rotateXYZ"]
+    }
+    def Cube "Ground" (
+        prepend apiSchemas = ["PhysicsCollisionAPI"]
+    )
+    {
+        double size = 1
+        double3 xformOp:scale = (20, 12, 0.2)
+        double3 xformOp:translate = (0, 0, -0.1)
+        uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+        color3f[] primvars:displayColor = [(0.23, 0.25, 0.28)]
+    }
+    def Xform "Rover" (
+        prepend apiSchemas = ["PhysicsRigidBodyAPI", "PhysicsMassAPI"]
+    )
+    {
+        bool physics:kinematicEnabled = 1
+        float physics:mass = 12
+        double3 xformOp:translate = (-4, 0, 0.35)
+        uniform token[] xformOpOrder = ["xformOp:translate"]
+        def Cube "Body" (
+            prepend apiSchemas = ["PhysicsCollisionAPI"]
+        )
+        {
+            double size = 1
+            double3 xformOp:scale = (0.8, 0.55, 0.4)
+            uniform token[] xformOpOrder = ["xformOp:scale"]
+            color3f[] primvars:displayColor = [(0.1, 0.35, 0.8)]
+        }
+        def Camera "RGB"
+        {
+            float focalLength = 24
+            float horizontalAperture = 20
+            double3 xformOp:translate = (0.45, 0, 0.35)
+            double3 xformOp:rotateXYZ = (90, 0, 90)
+            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:rotateXYZ"]
+        }
+    }
+    def Xform "Drone" (
+        prepend apiSchemas = ["PhysicsRigidBodyAPI", "PhysicsMassAPI"]
+    )
+    {
+        bool physics:kinematicEnabled = 1
+        float physics:mass = 2
+        double3 xformOp:translate = (-4, 0, 3)
+        uniform token[] xformOpOrder = ["xformOp:translate"]
+        def Cube "Body" (
+            prepend apiSchemas = ["PhysicsCollisionAPI"]
+        )
+        {
+            double size = 1
+            double3 xformOp:scale = (0.5, 0.5, 0.15)
+            uniform token[] xformOpOrder = ["xformOp:scale"]
+            color3f[] primvars:displayColor = [(0.12, 0.7, 0.45)]
+        }
+        def Camera "RGB"
+        {
+            float focalLength = 24
+            double3 xformOp:translate = (0, 0, -0.15)
+            uniform token[] xformOpOrder = ["xformOp:translate"]
+        }
+    }
+    def Xform "MovingObstacle" (
+        prepend apiSchemas = ["PhysicsRigidBodyAPI", "PhysicsMassAPI"]
+    )
+    {
+        bool physics:kinematicEnabled = 1
+        float physics:mass = 30
+        double3 xformOp:translate = (0, 3, 0.5)
+        uniform token[] xformOpOrder = ["xformOp:translate"]
+        def Capsule "Body" (
+            prepend apiSchemas = ["PhysicsCollisionAPI"]
+        )
+        {
+            float radius = 0.25
+            float height = 0.5
+            uniform token axis = "Z"
+            color3f[] primvars:displayColor = [(0.85, 0.35, 0.12)]
+        }
+    }
+    def Camera "Overview"
+    {
+        float focalLength = 24
+        double3 xformOp:translate = (0, -9, 9)
+        double3 xformOp:rotateXYZ = (45, 0, 0)
+        uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:rotateXYZ"]
+    }
+}
