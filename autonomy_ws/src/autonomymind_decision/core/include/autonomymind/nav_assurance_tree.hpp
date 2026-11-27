@@ -1,0 +1,3 @@
+#pragma once
+#include "autonomymind/behavior_trace.hpp"
+namespace autonomymind {enum class NavAssuranceSeverity:std::int32_t{NOMINAL=0,DEGRADED=1,VERIFY=2,CRITICAL=3};struct NavAssuranceRequest{int valid{};int minimum{};int required{};double integrity{};double hold_min{};double degrade_min{};bool disagreement{false};};struct NavAssuranceResponse{NavAssuranceSeverity severity{NavAssuranceSeverity::NOMINAL};Decision decision{Decision::CONTINUE_MISSION};Reason reason{Reason::NAVIGATION_NOMINAL};Guidance guidance{Guidance::FOLLOW_MISSION};ActiveRule rule{ActiveRule::NONE};double threshold{};double measured{};BehaviorTrace trace{};};class NavAssuranceTree{public:NavAssuranceResponse tick(const NavAssuranceRequest&)const;};}

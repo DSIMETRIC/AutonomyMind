@@ -1,0 +1,3 @@
+#pragma once
+#include "autonomymind/behavior_trace.hpp"
+namespace autonomymind {struct MissionRejoinRequest{bool mission_available{false};double xte_m{};double enter_m{};double heading_error_deg{};double heading_hold_deg{};};struct MissionRejoinResponse{bool active{false};Decision decision{Decision::CONTINUE_MISSION};Reason reason{Reason::NAVIGATION_NOMINAL};Guidance guidance{Guidance::FOLLOW_MISSION};ActiveRule rule{ActiveRule::NONE};RejoinSelection selected{RejoinSelection::NONE};double threshold{};double measured{};BehaviorTrace trace{};};class MissionRejoinTree{public:MissionRejoinResponse tick(const MissionRejoinRequest&)const;};}

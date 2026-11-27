@@ -1,0 +1,3 @@
+#pragma once
+#include "autonomymind/behavior_trace.hpp"
+namespace autonomymind {struct ContextMonitorRequest{double speed{},accel{},jerk{},yaw_rate_dps{},vertical_speed{};double high_speed{},high_accel{},high_jerk{},high_yaw{},vertical_rate{};};struct ContextMonitorResponse{std::uint32_t event_flags{EVENT_NONE};BehaviorTrace trace{};};class ContextMonitorTree{public:ContextMonitorResponse tick(const ContextMonitorRequest&)const;};}

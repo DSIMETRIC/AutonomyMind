@@ -1,0 +1,3 @@
+#pragma once
+#include "autonomymind/behavior_trace.hpp"
+namespace autonomymind {struct GpsDeniedRequest{bool gnss_valid{false};bool vio_valid{false};int nav_sources_valid{};int minimum{};double nav_integrity{};double hold_min{};};struct GpsDeniedResponse{bool active{false};Decision decision{Decision::CONTINUE_MISSION};Reason reason{Reason::NAVIGATION_NOMINAL};Guidance guidance{Guidance::FOLLOW_MISSION};ActiveRule rule{ActiveRule::NONE};BehaviorTrace trace{};};class GpsDeniedTree{public:GpsDeniedResponse tick(const GpsDeniedRequest&)const;};}
