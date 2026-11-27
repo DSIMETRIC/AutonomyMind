@@ -1,0 +1,14 @@
+string schema_version
+string observation_id
+string agent_id
+string agent_version
+float64 timestamp_s
+string frame_id
+string source
+string kind
+float64 confidence
+float64[3] position_m
+float64[3] velocity_mps
+string label
+string provenance_json
+string attributes_json

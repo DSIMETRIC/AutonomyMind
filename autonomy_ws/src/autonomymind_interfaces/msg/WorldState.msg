@@ -1,0 +1,11 @@
+string schema_version
+string world_state_id
+float64 timestamp_s
+string frame_id
+string producer_agent_id
+string ego_json
+string teammates_json
+autonomymind_interfaces/Observation[] observations
+string mission_context_json
+string map_context_json
+string provenance_json

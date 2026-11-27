@@ -1,0 +1,92 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://autonomymind.dev/schemas/safety_decision.schema.json",
+  "title": "SafetyDecision",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "decision_id",
+    "proposal_id",
+    "timestamp_s",
+    "validator_id",
+    "accepted",
+    "status",
+    "checks",
+    "deterministic"
+  ],
+  "properties": {
+    "schema_version": {
+      "type": "string",
+      "const": "1.0"
+    },
+    "decision_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "proposal_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "timestamp_s": {
+      "type": "number"
+    },
+    "validator_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "accepted": {
+      "type": "boolean"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "accepted",
+        "rejected",
+        "hold",
+        "invalid"
+      ]
+    },
+    "reason": {
+      "type": "string"
+    },
+    "checks": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "name",
+          "passed"
+        ],
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "passed": {
+            "type": "boolean"
+          },
+          "measured": {
+            "type": "number"
+          },
+          "limit": {
+            "type": "number"
+          },
+          "details": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "deterministic": {
+      "type": "boolean",
+      "const": true
+    },
+    "policy_version": {
+      "type": "string"
+    },
+    "config_sha256": {
+      "type": "string"
+    }
+  },
+  "additionalProperties": false
+}

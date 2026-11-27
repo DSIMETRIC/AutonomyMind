@@ -1,0 +1,121 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://autonomymind.dev/schemas/observation.schema.json",
+  "title": "Observation",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "observation_id",
+    "agent_id",
+    "agent_version",
+    "timestamp_s",
+    "frame_id",
+    "source",
+    "kind",
+    "confidence",
+    "provenance"
+  ],
+  "properties": {
+    "schema_version": {
+      "type": "string",
+      "const": "1.0"
+    },
+    "observation_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "agent_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "agent_version": {
+      "type": "string",
+      "minLength": 1
+    },
+    "timestamp_s": {
+      "type": "number"
+    },
+    "frame_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "source": {
+      "type": "string",
+      "minLength": 1
+    },
+    "kind": {
+      "type": "string",
+      "enum": [
+        "detection",
+        "track",
+        "pose",
+        "velocity",
+        "free_space",
+        "semantic_feature",
+        "map_feature",
+        "health",
+        "custom"
+      ]
+    },
+    "confidence": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 1
+    },
+    "position_m": {
+      "type": "array",
+      "items": {
+        "type": "number"
+      },
+      "minItems": 3,
+      "maxItems": 3
+    },
+    "velocity_mps": {
+      "type": "array",
+      "items": {
+        "type": "number"
+      },
+      "minItems": 3,
+      "maxItems": 3
+    },
+    "label": {
+      "type": "string"
+    },
+    "attributes": {
+      "type": "object",
+      "additionalProperties": true
+    },
+    "provenance": {
+      "type": "object",
+      "required": [
+        "producer",
+        "source_type"
+      ],
+      "properties": {
+        "producer": {
+          "type": "string"
+        },
+        "source_type": {
+          "type": "string",
+          "enum": [
+            "sensor",
+            "simulation",
+            "model",
+            "human",
+            "fusion",
+            "map",
+            "other"
+          ]
+        },
+        "model_version": {
+          "type": "string"
+        },
+        "dataset_version": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": true
+    }
+  },
+  "additionalProperties": false
+}

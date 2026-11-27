@@ -1,0 +1,88 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://autonomymind.dev/schemas/agent_proposal.schema.json",
+  "title": "AgentProposal",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "proposal_id",
+    "agent_id",
+    "agent_version",
+    "timestamp_s",
+    "proposal_type",
+    "confidence",
+    "priority",
+    "evidence",
+    "requires_safety_validation"
+  ],
+  "properties": {
+    "schema_version": {
+      "type": "string",
+      "const": "1.0"
+    },
+    "proposal_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "agent_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "agent_version": {
+      "type": "string",
+      "minLength": 1
+    },
+    "timestamp_s": {
+      "type": "number"
+    },
+    "proposal_type": {
+      "type": "string",
+      "enum": [
+        "trajectory",
+        "navigation",
+        "mission",
+        "coordination",
+        "recovery",
+        "hold",
+        "custom"
+      ]
+    },
+    "target_robot_id": {
+      "type": "string"
+    },
+    "confidence": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 1
+    },
+    "priority": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 100
+    },
+    "command": {
+      "type": "object",
+      "additionalProperties": true
+    },
+    "evidence": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "explanation": {
+      "type": "string"
+    },
+    "requires_safety_validation": {
+      "type": "boolean",
+      "const": true
+    },
+    "model_version": {
+      "type": "string"
+    },
+    "policy_version": {
+      "type": "string"
+    }
+  },
+  "additionalProperties": false
+}

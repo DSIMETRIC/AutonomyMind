@@ -1,25 +1,20 @@
-# Agent Contracts
+# Core Agent Contracts
 
-AutonomyMind agents communicate through explicit, versioned contracts.
+AutonomyMind agents exchange a small set of versioned, transport-independent contracts.
 
-Minimum metadata for agent outputs should include:
+The first public contract set is:
 
-- `agent_id`
-- `agent_version`
-- `timestamp`
-- `frame_id`
-- `source`
-- `confidence` or uncertainty representation when applicable
-- `provenance`
-- `schema_version`
+- `Observation` — one structured perception/localization/fusion observation.
+- `WorldState` — the shared semantic and kinematic state consumed by higher-level agents.
+- `AgentProposal` — a candidate action, plan, or recommendation produced by an agent.
+- `SafetyDecision` — deterministic acceptance/rejection evidence for a proposal.
 
-Decision-support outputs should additionally record:
+## Design rules
 
-- candidate set;
-- selected or ranked proposal;
-- supporting evidence;
-- fallback reason;
-- model or policy version;
-- whether deterministic safety accepted or rejected the proposal.
+1. Contracts are versioned independently from agent implementations.
+2. Every payload carries timestamp, frame, provenance, source agent, and schema version.
+3. Learned confidence is represented explicitly and never treated as proof of safety.
+4. `SafetyDecision` is produced by deterministic validation/runtime-assurance logic.
+5. The same logical contracts can be serialized as JSON, ROS 2 messages, logs, simulation events, or dataset records.
 
-Contracts should remain transport-independent so they can be mapped to ROS 2 messages, simulation APIs, logs, or offline datasets.
+See the JSON Schemas in this directory and the ROS 2 message definitions under `autonomy_ws/src/autonomymind_interfaces/msg/`.

@@ -1,0 +1,66 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://autonomymind.dev/schemas/world_state.schema.json",
+  "title": "WorldState",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "world_state_id",
+    "timestamp_s",
+    "frame_id",
+    "producer_agent_id",
+    "observations",
+    "provenance"
+  ],
+  "properties": {
+    "schema_version": {
+      "type": "string",
+      "const": "1.0"
+    },
+    "world_state_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "timestamp_s": {
+      "type": "number"
+    },
+    "frame_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "producer_agent_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "ego": {
+      "type": "object",
+      "additionalProperties": true
+    },
+    "teammates": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": true
+      }
+    },
+    "observations": {
+      "type": "array",
+      "items": {
+        "$ref": "observation.schema.json"
+      }
+    },
+    "mission_context": {
+      "type": "object",
+      "additionalProperties": true
+    },
+    "map_context": {
+      "type": "object",
+      "additionalProperties": true
+    },
+    "provenance": {
+      "type": "object",
+      "additionalProperties": true
+    }
+  },
+  "additionalProperties": false
+}

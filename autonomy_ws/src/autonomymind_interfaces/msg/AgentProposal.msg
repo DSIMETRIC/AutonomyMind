@@ -1,0 +1,15 @@
+string schema_version
+string proposal_id
+string agent_id
+string agent_version
+float64 timestamp_s
+string proposal_type
+string target_robot_id
+float64 confidence
+uint8 priority
+string command_json
+string[] evidence
+string explanation
+bool requires_safety_validation
+string model_version
+string policy_version

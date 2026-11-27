@@ -1,0 +1,22 @@
+{
+  "schema_version": "1.0",
+  "proposal_id": "proposal-001",
+  "agent_id": "planning_agent",
+  "agent_version": "0.1.0",
+  "timestamp_s": 0.0,
+  "proposal_type": "trajectory",
+  "target_robot_id": "robot-01",
+  "confidence": 0.84,
+  "priority": 50,
+  "command": {
+    "type": "velocity",
+    "vx_mps": 1.0,
+    "vy_mps": 0.0,
+    "vz_mps": 0.0
+  },
+  "evidence": ["world_state:ws-001"],
+  "explanation": "Example development proposal.",
+  "requires_safety_validation": true,
+  "model_version": "example",
+  "policy_version": "example"
+}

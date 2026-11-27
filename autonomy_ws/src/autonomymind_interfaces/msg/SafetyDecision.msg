@@ -1,0 +1,12 @@
+string schema_version
+string decision_id
+string proposal_id
+float64 timestamp_s
+string validator_id
+bool accepted
+string status
+string reason
+autonomymind_interfaces/SafetyCheck[] checks
+bool deterministic
+string policy_version
+string config_sha256
