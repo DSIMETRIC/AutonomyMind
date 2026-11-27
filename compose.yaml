@@ -31,3 +31,19 @@ services:
       dockerfile: Dockerfile.ros
     image: autonomymind/ros:jazzy-dev
     platform: ${AUTONOMYMIND_PLATFORM:-linux/amd64}
+
+
+  dynamic-demo:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: autonomymind/runtime:dev
+    platform: ${AUTONOMYMIND_PLATFORM:-linux/amd64}
+    command:
+      - dynamic-demo
+      - --scenario
+      - /workspace/simulation/isaac/scenarios/dynamic_crossing.json
+      - --trace
+      - /workspace/semantic_data/outbox/dynamic_trace.jsonl
+    volumes:
+      - ./semantic_data/outbox:/workspace/semantic_data/outbox
