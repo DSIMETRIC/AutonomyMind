@@ -5,10 +5,10 @@ from pathlib import Path
 from .fleet import Member, Task
 from .mission_orchestrator import MissionTask, MissionOrchestrator
 
-def run(scenario):
+def run(scenario,ranker=None):
     tasks=[MissionTask(Task(t["id"],frozenset(t["required"]),tuple(t["goal"]),t["priority"]),tuple(t.get("dependencies",[]))) for t in scenario["tasks"]]
     config=scenario["coordination"]
-    engine=MissionOrchestrator(tasks,config["max_age_s"],config["lease_s"])
+    engine=MissionOrchestrator(tasks,config["max_age_s"],config["lease_s"],ranker=ranker)
     snapshots=[];issued={}
     for event in scenario["events"]:
         now=event["t"]

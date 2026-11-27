@@ -1,0 +1,18 @@
+# Overlay ONLY on compose.agents.host.yaml; trusted Linux development.
+services:
+  train-ranker:
+    image: autonomymind/agents-ai:dev
+    build:
+      context: .
+      dockerfile: Dockerfile.agents.ai
+    profiles: ["training"]
+    entrypoint: ["/opt/agent-ai/bin/python","/workspace/train_reference_ranker.py"]
+    command: ["--output","/models"]
+    volumes: ["./semantic_data/outbox/models:/models"]
+  coordination:
+    image: autonomymind/agents-ai:dev
+    build:
+      context: .
+      dockerfile: Dockerfile.agents.ai
+    command: ["/opt/agent-ai/bin/python","-m","autonomymind_runtime.dds_agent","--id","coordinator","--role","coordination","--model-config","/models/ranker.json"]
+    volumes: ["./semantic_data/outbox/models:/models:ro"]

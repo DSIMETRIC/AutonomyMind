@@ -149,6 +149,10 @@ The DDS reference workers passed an end-to-end mission replay on a Linux worksta
 
 The [advisory model backend interface](docs/model-backends.md) introduces interchangeable model registration and validated candidate ranking. Only a deterministic reference ranker is supplied; learned inference and DDS integration remain pending.
 
+## Optional local AI coordination
+
+A CPU ONNX backend ranks eligible fleet members using a synthetic-trained reference utility model, with verified artifact digest and advisory evidence. See [AI coordination](docs/ai-coordination.md). No learned production policy or live vehicle control is claimed; execution remains to be verified.
+
 ## Documentation
 
 - [Architecture and roadmap](docs/architecture.md)

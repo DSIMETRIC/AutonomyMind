@@ -16,7 +16,7 @@ class Offer:
     expires_at: float
 
 class MissionOrchestrator:
-    def __init__(self,tasks,max_age_s,lease_s):
+    def __init__(self,tasks,max_age_s,lease_s,ranker=None):
         self.tasks={t.task.id:t for t in tasks}
         if len(self.tasks)!=len(tasks) or not math.isfinite(lease_s) or lease_s<=0:
             raise ValueError("invalid mission")
@@ -27,7 +27,7 @@ class MissionOrchestrator:
             resolved.update(ready);remaining-=ready
         self.fleet=Fleet(max_age_s);self.lease_s=lease_s
         self.offers={};self.completed=set();self.epoch=0
-        self.events=[];self.last_time=-math.inf
+        self.events=[];self.last_time=-math.inf;self.ranker=ranker
     def _time(self,now):
         if not math.isfinite(now) or now<self.last_time:raise ValueError("nonmonotonic event time")
         self.last_time=now
@@ -49,7 +49,27 @@ class MissionOrchestrator:
         available=Fleet(self.fleet.max_age_s)
         for m in self.fleet.members.values():
             if m.id not in busy:available.update(m)
-        assigned,_=available.allocate(ready,now)
+        if self.ranker is None:
+            assigned,_=available.allocate(ready,now)
+        else:
+            assigned={}
+            for task in sorted(ready,key=lambda t:(-t.priority,t.id)):
+                eligible=sorted((m for m in available.members.values() if m.available and available.fresh(m,now) and task.required<=m.capabilities),key=lambda m:m.id)
+                if not eligible:continue
+                request={"candidate_ids":[m.id for m in eligible],"features":{m.id:{"distance_m":math.dist(m.position,task.goal),"telemetry_age_s":now-m.timestamp,"uncertainty_m":m.uncertainty_m,"task_priority":task.priority} for m in eligible}}
+                try:
+                    advice=self.ranker(request)
+                    ranked=advice["ranked_ids"]
+                    ids=request["candidate_ids"]
+                    if not isinstance(ranked,list) or len(ranked)!=len(ids) or set(ranked)!=set(ids) or advice.get("motion_authorized") is not False or advice.get("requires_safety_validation") is not True:
+                        raise ValueError("invalid advisory result")
+                    winner=ranked[0]
+                    self._event(now,"model_advice",task=task.id,advice=advice)
+                except Exception as exc:
+                    self._event(now,"model_advice_rejected",task=task.id,error=type(exc).__name__)
+                    continue
+                assigned[task.id]=winner
+                del available.members[winner]
         for k,m in assigned.items():
             self.epoch+=1
             o=Offer(k,m,self.epoch,now+self.lease_s)

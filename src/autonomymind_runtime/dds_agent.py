@@ -13,9 +13,9 @@ from .industrial_pilot import run
 ROLES={"mission":(["mission"],{"mission.submit"}),"coordination":(["allocate"],{"mission.request"}),"evaluation":(["audit"],{"mission.report"})}
 
 class Worker(Node):
-    def __init__(self,id,role,output):
+    def __init__(self,id,role,output,ranker=None):
         super().__init__("agent_"+id)
-        self.id=id;self.role=role;self.output=Path(output)
+        self.id=id;self.role=role;self.output=Path(output);self.ranker=ranker
         caps,accepted=ROLES[role];self.caps=caps
         self.directory=PeerDirectory();self.receiver=Receiver(id,accepted)
         qos=QoSProfile(depth=32,reliability=ReliabilityPolicy.RELIABLE,durability=DurabilityPolicy.VOLATILE)
@@ -42,7 +42,7 @@ class Worker(Node):
             elif self.role=="coordination":
                 peers=self.directory.discover("audit",time.monotonic())
                 if not peers:raise RuntimeError("no live evaluator")
-                report=run(m["payload"])
+                report=run(m["payload"],ranker=self.ranker)
                 self.publish(envelope(self.id,peers[0],"mission.report",report,time.time(),15,m["correlation"]))
             else:
                 if m["payload"].get("motion_authorized") is not False:raise ValueError("not offline report")
@@ -55,9 +55,14 @@ class Worker(Node):
             self.get_logger().error(f"event rejected: {type(exc).__name__}: {exc}")
 
 def main():
-    p=argparse.ArgumentParser();p.add_argument("--id",required=True);p.add_argument("--role",choices=ROLES,required=True);p.add_argument("--output",default="/outbox/dds_pilot.json");a=p.parse_args()
+    p=argparse.ArgumentParser();p.add_argument("--id",required=True);p.add_argument("--role",choices=ROLES,required=True);p.add_argument("--output",default="/outbox/dds_pilot.json");p.add_argument("--model-config");a=p.parse_args()
     if not a.id.replace("_","").isalnum():raise ValueError("invalid node ID")
-    rclpy.init();n=Worker(a.id,a.role,a.output)
+    ranker=None
+    if a.model_config:
+        if a.role!="coordination":raise ValueError("model configuration requires coordination role")
+        from .onnx_ranker import load_ranker
+        ranker=load_ranker(json.loads(Path(a.model_config).read_text()))
+    rclpy.init();n=Worker(a.id,a.role,a.output,ranker)
     try:rclpy.spin(n)
     finally:n.destroy_node();rclpy.shutdown()
 if __name__=="__main__":main()
