@@ -1,0 +1,27 @@
+{
+  "schema_version": "1.0",
+  "scenario_id": "dynamic-crossing-v1",
+  "frames": [
+    {
+      "timestamp_s": 0.0,
+      "ego": {"robot_id":"rover-01","position_m":[0.0,0.0,0.0],"speed_mps":1.0},
+      "tracks": [
+        {"track_id":"track-000001","label":"person","position_m":[4.0,2.5,0.0],"velocity_mps":[0.0,-0.8,0.0],"confidence":0.95}
+      ]
+    },
+    {
+      "timestamp_s": 1.0,
+      "ego": {"robot_id":"rover-01","position_m":[1.0,0.0,0.0],"speed_mps":1.0},
+      "tracks": [
+        {"track_id":"track-000001","label":"person","position_m":[4.0,1.7,0.0],"velocity_mps":[0.0,-0.8,0.0],"confidence":0.95}
+      ]
+    },
+    {
+      "timestamp_s": 2.0,
+      "ego": {"robot_id":"rover-01","position_m":[2.0,0.0,0.0],"speed_mps":1.0},
+      "tracks": [
+        {"track_id":"track-000001","label":"person","position_m":[4.0,0.9,0.0],"velocity_mps":[0.0,-0.8,0.0],"confidence":0.95}
+      ]
+    }
+  ]
+}
