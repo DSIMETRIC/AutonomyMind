@@ -7,9 +7,10 @@ AutonomyMind is organized as an agentic autonomy stack with deterministic safety
 ```mermaid
 flowchart TB
   Sensors[Real / Simulated Sensors] --> PA[Perception Agent]
-  PA --> O[Observation]
-  O --> SF[Sensor Fusion Agent]
-  SF --> WM[World Model Agent]
+  PA --> O[Camera / LiDAR Observations]
+  O --> SF[Temporal + Geometric Sensor Fusion]
+  SF --> FO[Fused 3D Observation + Uncertainty]
+  FO --> WM[World Model Agent]
   WM --> WS[WorldState]
   WS --> PLA[Planning Agent]
   WS --> CA[Coordination Agent]
@@ -139,3 +140,20 @@ flowchart LR
   end
   Dev <-->|versioned contracts / datasets / models| Edge
 ```
+
+
+## 7. Camera + LiDAR fusion
+
+```mermaid
+flowchart LR
+  CAM[Camera] --> DET[2D Detector]
+  DET --> COBS[Camera Observation<br/>bbox + class + confidence]
+  LIDAR[LiDAR] --> LOBS[LiDAR Observation<br/>3D point / range]
+  CAL[Intrinsics + Extrinsics] --> FUSE[Temporal + Geometric Association]
+  COBS --> FUSE
+  LOBS --> FUSE
+  FUSE --> FOBS[Fused 3D Observation<br/>semantic label + covariance + provenance]
+  FOBS --> WM[World Model]
+```
+
+The fusion reference implementation rejects temporally misaligned pairs, transforms LiDAR points into the camera frame, projects them with calibrated intrinsics, associates projected points with 2-D detections, and publishes 3-D observations with explicit uncertainty and provenance.
