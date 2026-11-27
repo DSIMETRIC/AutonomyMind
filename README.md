@@ -347,12 +347,6 @@ docker compose run --rm cooperative-demo
 The current public policy is deliberately transparent: task assignment is capability- and distance-based, while predicted robot-to-robot conflicts generate explicit yield directives. Local robot safety remains independent and deterministic.
 
 
-## Demo animation
-
- > **Demo animation — not a live Isaac Sim capture.**  
-> Shows the AutonomyMind flow: perception → tracking → world model → planning → decision → safety → coordination.
-
-![AutonomyMind demo](docs/assets/autonomymind-demo-concept.gif)
 
 ## Mission dashboard demo
 
