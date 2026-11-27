@@ -1,5 +1,6 @@
 """Bounded, simulator-only straight-line experiment. No physical robot routing."""
 import json
+import copy
 import math
 import time
 from pathlib import Path
@@ -79,12 +80,20 @@ def main():
                 q.threat_position_m.extend([other.x-p.x,other.y-p.y,other.z-p.z])
                 q.threat_velocity_mps.extend([-ego.twist.twist.linear.x,-ego.twist.twist.linear.y,-ego.twist.twist.linear.z])
             q.environment_valid=True;q.communication_valid=True
-            odom.publish(ego);spin(0.06)
+            # Normalize only sub-micrometre negative ground-plane roundoff in this
+            # flat Gazebo reference world. Preserve raw sensor data and timestamps.
+            raw_z = p.z
+            forwarded = copy.deepcopy(ego)
+            if -1e-6 <= raw_z < 0.0:
+                forwarded.pose.pose.position.z = 0.0
+                for i in range(2, len(q.threat_position_m), 3):
+                    q.threat_position_m[i] += raw_z
+            odom.publish(forwarded);spin(0.06)
             f=client.call_async(q)
             rclpy.spin_until_future_complete(node,f,timeout_sec=0.4)
             if not f.done() or f.result() is None: reason="rta_timeout";break
             a=f.result()
-            trace.append({"x_m":p.x,"lidar_m":distance,"rta_recorded":a.recorded,"reason":a.reason,"sequence":q.sequence})
+            trace.append({"x_m":p.x,"lidar_m":distance,"rta_recorded":a.recorded,"reason":a.reason,"sequence":q.sequence,"raw_z_m":raw_z,"forwarded_z_m":forwarded.pose.pose.position.z,"state_receipt_age_s":a.state_receipt_age_s})
             if not a.recorded: reason="rta_rejected";break
             if not ready() or clearance() is None or clearance()<=1.4: reason="sensor_stop";break
             # Short pulses only, separated by zero commands. Not a real-time watchdog.
