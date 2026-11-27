@@ -1,0 +1,5 @@
+FROM ros:jazzy-ros-base
+WORKDIR /workspace
+ENV PYTHONPATH=/workspace/src PYTHONUNBUFFERED=1 PYTHONDONTWRITEBYTECODE=1
+COPY src/ /workspace/src/
+COPY simulation/pilots/ /workspace/pilots/

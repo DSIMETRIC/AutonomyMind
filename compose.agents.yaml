@@ -1,0 +1,27 @@
+x-agent: &agent
+  image: autonomymind/agents:dev
+  environment:
+    ROS_DOMAIN_ID: "78"
+  networks: [agents]
+services:
+  mission:
+    <<: *agent
+    build:
+      context: .
+      dockerfile: Dockerfile.agents
+    command: ["python3","-m","autonomymind_runtime.dds_agent","--id","mission","--role","mission"]
+  coordination:
+    <<: *agent
+    command: ["python3","-m","autonomymind_runtime.dds_agent","--id","coordinator","--role","coordination"]
+  evaluation:
+    <<: *agent
+    command: ["python3","-m","autonomymind_runtime.dds_agent","--id","evaluation","--role","evaluation"]
+    volumes: ["./semantic_data/outbox:/outbox"]
+  probe:
+    <<: *agent
+    profiles: ["test"]
+    entrypoint: ["/ros_entrypoint.sh","python3","-m","autonomymind_runtime.dds_probe"]
+    command: ["--scenario","/workspace/pilots/industrial_inspection.json"]
+networks:
+  agents:
+    internal: true

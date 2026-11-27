@@ -139,6 +139,10 @@ See [industrial pilot and acceptance gates](docs/industrial-pilot.md).
 
 The first executable in-process agent kernel supports registration, capabilities, event contracts, discovery, expiry and delivery audit. Run `docker compose run --build --rm agent-pilot`. This wraps the offline mission pilot; distributed transport and learned agents remain pending. See [Agent Runtime](docs/agent-runtime.md).
 
+## Distributed agents — DDS reference
+
+Independent mission, coordination and evaluation containers exchange versioned events and capability heartbeats via ROS 2 DDS. This is an offline mission replay, not live robot control or distributed AI inference. See [Distributed Agent Runtime](docs/distributed-agents.md) for build, probe and missing-peer tests.
+
 ## Documentation
 
 - [Architecture and roadmap](docs/architecture.md)
