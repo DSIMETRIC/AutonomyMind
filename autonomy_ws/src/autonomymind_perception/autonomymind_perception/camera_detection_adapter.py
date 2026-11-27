@@ -38,6 +38,8 @@ class CameraDetectionAdapter(Node):
                 "bbox_center_y_px":float(center.y),
                 "bbox_size_x_px":float(det.bbox.size_x),
                 "bbox_size_y_px":float(det.bbox.size_y),
+                "bbox_xyxy":[float(center.x-det.bbox.size_x/2),float(center.y-det.bbox.size_y/2),
+                             float(center.x+det.bbox.size_x/2),float(center.y+det.bbox.size_y/2)],
                 "detection_source":"vision_msgs/Detection2DArray",
             }
             obs=make_observation(

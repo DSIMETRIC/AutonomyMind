@@ -39,7 +39,7 @@ def dynamic_demo(scenario: str, trace: str):
     results=[pipe.step(f) for f in frames]
     print(json.dumps(results,indent=2,sort_keys=True))
     final=results[-1]
-    if not final["selected_safety"]["accepted"]:
+    if not (final["selected_safety"] or {}).get("accepted",False):
         raise SystemExit(3)
 
 def cooperative_demo(scenario: str):

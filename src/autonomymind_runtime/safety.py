@@ -1,3 +1,5 @@
+import math
+from .conflict import closest_approach
 from .contracts import AgentProposal, SafetyCheck, SafetyDecision, new_id
 
 class DeterministicSafetyBridge:
@@ -30,3 +32,20 @@ class DeterministicSafetyBridge:
 
     def validate_candidates(self, proposals: list[AgentProposal], obstacle_distance_m: float=None):
         return [(p,self.validate(p,obstacle_distance_m)) for p in proposals]
+
+    def validate_dynamic(self, proposal, world):
+        # Simulation reference only: constant velocity, point geometry.
+        d=self.validate(proposal)
+        v=[float(proposal.command[k]) for k in ("vx_mps","vy_mps","vz_mps")]
+        distances=[closest_approach(world["ego"]["position_m"],v,t["position_m"],t["velocity_mps"],5.0)["closest_distance_m"] for t in world["tracks"]]
+        clearance=min(distances,default=1e6)
+        d.checks=[c for c in d.checks if c.name!="example_obstacle_clearance"]
+        d.checks.append(SafetyCheck("predicted_point_clearance",math.isfinite(clearance) and clearance>=2.0,clearance,2.0))
+        d.accepted=all(c.passed for c in d.checks)
+        d.status="accepted" if d.accepted else "rejected"
+        d.reason="reference checks passed" if d.accepted else "reference checks failed"
+        d.policy_version="simulation-point-clearance-v2"
+        return d
+
+    def validate_dynamic_candidates(self, proposals, world):
+        return [(p,self.validate_dynamic(p,world)) for p in proposals]
