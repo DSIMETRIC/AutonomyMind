@@ -4,10 +4,14 @@ on:
   push:
     paths:
       - 'autonomy_ws/src/autonomymind_decision/**'
+      - 'autonomy_ws/src/autonomymind_interfaces/**'
+      - 'orchestration/contracts/**'
       - '.github/workflows/autonomymind-decision-ci.yml'
   pull_request:
     paths:
       - 'autonomy_ws/src/autonomymind_decision/**'
+      - 'autonomy_ws/src/autonomymind_interfaces/**'
+      - 'orchestration/contracts/**'
       - '.github/workflows/autonomymind-decision-ci.yml'
 
 jobs:
@@ -32,12 +36,14 @@ jobs:
           mkdir -p ros_ws/src
           ln -s "$GITHUB_WORKSPACE/autonomy_ws/src/autonomymind_decision" \
             ros_ws/src/autonomymind_decision
+          ln -s "$GITHUB_WORKSPACE/autonomy_ws/src/autonomymind_interfaces" \
+            ros_ws/src/autonomymind_interfaces
           cd ros_ws
           colcon build \
-            --packages-select autonomymind_decision \
+            --packages-select autonomymind_interfaces autonomymind_decision \
             --cmake-args -DBUILD_TESTING=ON
           source install/setup.bash
-          colcon test --packages-select autonomymind_decision --event-handlers console_direct+
+          colcon test --packages-select autonomymind_interfaces autonomymind_decision --event-handlers console_direct+
           colcon test-result --verbose
       - name: Install dashboard browser
         run: |
