@@ -1,0 +1,24 @@
+services:
+  demo:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: autonomymind/runtime:dev
+    platform: ${AUTONOMYMIND_PLATFORM:-linux/amd64}
+    command: ["demo","--scenario","/workspace/simulation/isaac/scenarios/obstacle_demo.json","--outbox","/workspace/semantic_data/outbox"]
+    volumes:
+      - ./semantic_data/outbox:/workspace/semantic_data/outbox
+  test:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: autonomymind/runtime:dev
+    platform: ${AUTONOMYMIND_PLATFORM:-linux/amd64}
+    entrypoint: ["/workspace/scripts/run_tests.sh"]
+  contract-check:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: autonomymind/runtime:dev
+    platform: ${AUTONOMYMIND_PLATFORM:-linux/amd64}
+    command: ["contract-check"]

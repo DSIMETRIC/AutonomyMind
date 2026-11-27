@@ -1,0 +1,9 @@
+.git
+.github
+**/__pycache__
+**/*.pyc
+semantic_data/outbox/*
+!semantic_data/outbox/.gitkeep
+autonomy_ws/build
+autonomy_ws/install
+autonomy_ws/log
