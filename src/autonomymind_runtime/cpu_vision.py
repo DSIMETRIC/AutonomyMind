@@ -30,7 +30,9 @@ def decode_yolo(output, image_w, image_h, input_w, input_h, conf_threshold=0.25,
         arr=arr[0]
     if arr.ndim!=2:
         raise ValueError(f"expected 2D/3D YOLO output, got shape {arr.shape}")
-    if arr.shape[0] < arr.shape[1] and arr.shape[0] <= 512:
+    # Typical exported YOLO tensors are feature-major, e.g. [84, 8400].
+    # Small test/example tensors may already be row-major, e.g. [3, 6].
+    if arr.shape[0] >= 5 and arr.shape[0] <= 512 and arr.shape[1] > arr.shape[0] * 2:
         arr=arr.T
     if arr.shape[1] < 5:
         raise ValueError("YOLO rows must contain box + class scores")
