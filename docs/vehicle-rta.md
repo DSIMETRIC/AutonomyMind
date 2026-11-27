@@ -19,3 +19,5 @@ Profiles are supplied explicitly by the integrator, not inferred from a robot na
 The gate rejects missing/stale context, invalid profiles, malformed samples and inconsistent candidate trajectories across threats. The initial API requires at least one threat request; it cannot represent verified empty airspace. Health flags and age must come from a trusted upstream source. Samples and reported peak dynamics are not a proof of continuous-time safety. The legacy checker uses a flat terrain plane and point traffic prediction; true airspeed, wind, stopping distance, swept volumes, uncertainty, terrain slope and vehicle-specific dynamics remain to be integrated.
 
 No actuator, autopilot, ROS authorization topic or Python binding is enabled. Rejection means no authorization, not a universal stop command. Contingency policies must be independently validated per vehicle. All tests are synthetic and do not establish flight or ground safety certification.
+
+See [Vehicle Adapter SDK](vehicle-adapter-sdk.md) for the simulation-only recording interface and external telemetry integration contracts.

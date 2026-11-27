@@ -26,6 +26,7 @@ add_library(autonomymind_decision_core SHARED
   core/src/trajectory_generator.cpp
   core/src/rta.cpp
   core/src/vehicle_rta.cpp
+  core/src/vehicle_adapter.cpp
   core/src/mission_behavior_tree.cpp
   core/src/nav_assurance_tree.cpp
   core/src/gps_denied_tree.cpp
@@ -75,6 +76,7 @@ if(BUILD_TESTING)
   add_fm_decision_test(test_trajectory_generator test/test_trajectory_generator.cpp)
   add_fm_decision_test(test_full_rta test/test_full_rta.cpp)
   add_fm_decision_test(test_vehicle_rta test/test_vehicle_rta.cpp)
+  add_fm_decision_test(test_vehicle_adapter test/test_vehicle_adapter.cpp)
   add_fm_decision_test(test_ml_advisory test/test_ml_advisory.cpp)
   target_compile_definitions(test_ml_advisory PRIVATE FM_TEST_CONFIG="${CMAKE_CURRENT_SOURCE_DIR}/config/profiles/autonomymind_core.profile")
   add_fm_decision_test(test_core test/test_core.cpp)
