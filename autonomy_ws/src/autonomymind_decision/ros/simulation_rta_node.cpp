@@ -15,21 +15,30 @@ class SimulationRtaNode final:public rclcpp::Node {
   SimulationRtaNode():Node("simulation_rta") {
     id_=declare_parameter<std::string>("vehicle_id","sim-rover");
     const auto kind=declare_parameter<std::string>("vehicle_kind","rover");
-    profile_.id="synthetic-"+kind;
+    profile_.id=declare_parameter<std::string>("profile_id","synthetic-"+kind);
     if(kind=="rover") profile_.kind=VehicleKind::Rover;
     else if(kind=="multirotor") profile_.kind=VehicleKind::Multirotor;
     else if(kind=="fixed_wing") profile_.kind=VehicleKind::FixedWing;
     else throw std::invalid_argument("unsupported reference vehicle kind");
-    profile_.max_state_age_s=0.5;
-    profile_.max_ground_height_error_m=0.1;
-    profile_.min_horizontal_speed_mps=kind=="fixed_wing"?2.0:0.0;
+    profile_.max_state_age_s=declare_parameter<double>("max_state_age_s",0.5);
+    profile_.max_ground_height_error_m=declare_parameter<double>("max_ground_height_error_m",0.1);
+    profile_.min_horizontal_speed_mps=declare_parameter<double>("min_horizontal_speed_mps",kind=="fixed_wing"?2.0:0.0);
     auto& l=profile_.limits;
-    l.min_separation_m=1; l.geofence_min_x_m=-100; l.geofence_max_x_m=100;
-    l.geofence_min_y_m=-100; l.geofence_max_y_m=100;
-    l.geofence_min_z_m=-1; l.geofence_max_z_m=100;
-    l.max_speed_mps=10; l.max_vertical_speed_mps=5; l.max_accel_mps2=10;
-    l.max_jerk_mps3=10; l.max_yaw_rate_dps=90; l.max_bank_angle_deg=45;
-    l.min_terrain_clearance_m=kind=="rover"?0.0:1.0;
+    l.min_separation_m=declare_parameter<double>("min_separation_m",1.0);
+    l.geofence_min_x_m=declare_parameter<double>("geofence_min_x_m",-100.0);
+    l.geofence_max_x_m=declare_parameter<double>("geofence_max_x_m",100.0);
+    l.geofence_min_y_m=declare_parameter<double>("geofence_min_y_m",-100.0);
+    l.geofence_max_y_m=declare_parameter<double>("geofence_max_y_m",100.0);
+    l.geofence_min_z_m=declare_parameter<double>("geofence_min_z_m",-1.0);
+    l.geofence_max_z_m=declare_parameter<double>("geofence_max_z_m",100.0);
+    l.max_speed_mps=declare_parameter<double>("max_speed_mps",10.0);
+    l.max_vertical_speed_mps=declare_parameter<double>("max_vertical_speed_mps",5.0);
+    l.max_accel_mps2=declare_parameter<double>("max_accel_mps2",10.0);
+    l.max_jerk_mps3=declare_parameter<double>("max_jerk_mps3",10.0);
+    l.max_yaw_rate_dps=declare_parameter<double>("max_yaw_rate_dps",90.0);
+    l.max_bank_angle_deg=declare_parameter<double>("max_bank_angle_deg",45.0);
+    l.terrain_elevation_m=declare_parameter<double>("terrain_elevation_m",0.0);
+    l.min_terrain_clearance_m=declare_parameter<double>("min_terrain_clearance_m",kind=="rover"?0.0:1.0);
     sub_=create_subscription<nav_msgs::msg::Odometry>("simulation/odometry",rclcpp::SensorDataQoS(),
         [this](nav_msgs::msg::Odometry::ConstSharedPtr m){ odom_=m; received_=Clock::now(); });
     service_=create_service<Service>("simulation/assess_trajectory",

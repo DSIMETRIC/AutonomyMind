@@ -165,6 +165,10 @@ A DDS evidence service now accepts bounded, timestamped metric observations and 
 
 The configurable reference loop integrates shared evidence, mission allocation, A* and model-specific propagation for heterogeneous vehicles. Run `docker compose run --build --rm cooperative-kinematic`. See [integration scope](docs/cooperative-kinematic.md). No physics simulator, DDS, learned inference or C++ RTA integration is claimed for this experiment; execution pending.
 
+## Multi-vehicle Gazebo RTA assessment
+
+The C++ reference assessment service supports externally configured profile limits and independent namespaced rover/multirotor instances. See [fleet RTA assessment](docs/fleet-rta.md). This is a read-only stationary Gazebo test; no cooperative movement or road-vehicle authorization is claimed.
+
 ## Documentation
 
 - [Architecture and roadmap](docs/architecture.md)

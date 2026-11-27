@@ -1,0 +1,18 @@
+# Overlay on compose.yaml and compose.closed_loop.yaml; read-only assessment.
+services:
+  rta:
+    command: ["bash","-lc","source /opt/ros/jazzy/setup.bash && source /workspace/install/setup.bash && ros2 run autonomymind_decision simulation_rta_node --ros-args -r __ns:=/fleet/rover --params-file /config/fleet_rta_profiles.yaml"]
+    volumes: ["./fleet_rta_profiles.yaml:/config/fleet_rta_profiles.yaml:ro"]
+  rta-drone:
+    image: autonomymind/ros-gazebo-base:dev
+    environment:
+      ROS_DOMAIN_ID: "76"
+    command: ["bash","-lc","source /opt/ros/jazzy/setup.bash && source /workspace/install/setup.bash && ros2 run autonomymind_decision simulation_rta_node --ros-args -r __ns:=/fleet/drone --params-file /config/fleet_rta_profiles.yaml"]
+    volumes: ["./fleet_rta_profiles.yaml:/config/fleet_rta_profiles.yaml:ro"]
+  fleet-probe:
+    image: autonomymind/gazebo:dev
+    environment:
+      ROS_DOMAIN_ID: "76"
+    command: ["bash","-lc","source /opt/ros/jazzy/setup.bash && source /workspace/install/setup.bash && python3 /gazebo/fleet_rta_probe.py"]
+    depends_on: [bridge, rta, rta-drone]
+    volumes: ["./outbox:/gazebo/outbox"]

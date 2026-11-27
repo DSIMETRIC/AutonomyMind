@@ -1,0 +1,19 @@
+/fleet/rover/simulation_rta:
+  ros__parameters:
+    vehicle_id: sim-rover
+    vehicle_kind: rover
+    profile_id: reference-rover-v1
+    max_speed_mps: 1.0
+    max_vertical_speed_mps: 0.1
+    max_ground_height_error_m: 0.1
+    min_terrain_clearance_m: 0.0
+    min_separation_m: 1.0
+/fleet/drone/simulation_rta:
+  ros__parameters:
+    vehicle_id: sim-drone
+    vehicle_kind: multirotor
+    profile_id: reference-multirotor-v1
+    max_speed_mps: 2.0
+    max_vertical_speed_mps: 1.0
+    min_terrain_clearance_m: 1.0
+    min_separation_m: 1.5
