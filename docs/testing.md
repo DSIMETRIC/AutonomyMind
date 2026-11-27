@@ -67,3 +67,23 @@ A change is releasable only when:
 - contracts remain parseable and versioned.
 
 Hardware-in-the-loop, Isaac sensor realism, GPU inference accuracy, and real vehicle acceptance are later gates and are not implied by software CI.
+
+
+## Dynamic obstacle E2E
+
+The dynamic crossing test exercises a moving obstacle across multiple timestamps.
+
+Assertions include:
+
+- persistent track identity in the scenario;
+- multiple candidate maneuvers;
+- closest-approach conflict estimation;
+- deterministic safety result for every candidate;
+- selection of an accepted final maneuver;
+- reproducible JSONL episode trace.
+
+Run:
+
+```bash
+docker compose run --rm dynamic-demo
+```
