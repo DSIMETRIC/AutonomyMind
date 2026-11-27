@@ -41,3 +41,13 @@ docker compose -p autonomymind-loop -f simulation/gazebo/compose.yaml -f simulat
 docker compose -p autonomymind-loop -f simulation/gazebo/compose.yaml -f simulation/gazebo/compose.closed_loop.yaml run --rm probe
 ```
 Stop/reset: same Compose flags with down. Results: outbox/closed_loop.json. Restart before repeat. PASS requires measured forward displacement, obstacle-related stop, final clearance and low longitudinal velocity. No collision-contact monitor, continuous-time assurance, independent watchdog or calibrated braking model yet. Neither this world nor probe has been executed on a simulator host.
+
+## Reference waypoint evasion (experimental)
+Uses the existing stable world with static obstacle and drone. Four unicycle candidates are assessed by the C++ service; fixed reference waypoints guide the rover around the known obstacle. An independent ROS relay sends zero on command timeout or missing/near LiDAR; it is not a simulator-side watchdog and cannot guarantee stopping if the relay or bridge dies. The bridge is simulator-only; never connect hardware. Candidate extrema are illustrative, obstacle velocity comes from simulator ground truth, and the planner is not a general dynamic obstacle avoidance system. The viewer plots actual trace samples, not video. Not executed yet.
+
+```bash
+docker compose -f simulation/gazebo/compose.yaml build gazebo
+docker compose -p autonomymind-evasion -f simulation/gazebo/compose.yaml -f simulation/gazebo/compose.evasion.yaml up -d rta gazebo bridge watchdog viewer
+docker compose -p autonomymind-evasion -f simulation/gazebo/compose.yaml -f simulation/gazebo/compose.evasion.yaml run --rm probe
+```
+Viewer: http://localhost:8090/evasion.html. Reset with same Compose flags and down. Trace: outbox/evasion.json. Goal status only demonstrates waypoint arrival, not collision-free certification. Dynamic obstacle motion, contact instrumentation, independent simulator watchdog, real video capture and sensor-based tracking remain pending.

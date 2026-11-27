@@ -1,0 +1,31 @@
+services:
+  gazebo:
+    command: ["bash","-lc","source /opt/ros/jazzy/setup.bash && gz sim -s -r --headless-rendering /gazebo/worlds/closed_loop_reference.sdf"]
+    environment:
+      GZ_PARTITION: autonomymind_evasion
+      ROS_DOMAIN_ID: "77"
+      LIBGL_ALWAYS_SOFTWARE: "1"
+  rta:
+    environment:
+      ROS_DOMAIN_ID: "77"
+  bridge:
+    environment:
+      ROS_DOMAIN_ID: "77"
+      GZ_PARTITION: autonomymind_evasion
+    command: ["bash","-lc","source /opt/ros/jazzy/setup.bash && ros2 run ros_gz_bridge parameter_bridge --ros-args -p config_file:=/gazebo/closed_loop_bridge.yaml"]
+  probe:
+    environment:
+      ROS_DOMAIN_ID: "77"
+    command: ["bash","-lc","source /opt/ros/jazzy/setup.bash && source /workspace/install/setup.bash && python3 /gazebo/evasion_probe.py"]
+    depends_on: [bridge, rta, watchdog]
+  watchdog:
+    image: autonomymind/gazebo:dev
+    environment:
+      ROS_DOMAIN_ID: "77"
+    command: ["bash","-lc","source /opt/ros/jazzy/setup.bash && python3 /gazebo/evasion_watchdog.py"]
+    depends_on: [bridge]
+  viewer:
+    image: autonomymind/gazebo:dev
+    command: ["python3","-m","http.server","8090","--directory","/gazebo"]
+    ports: ["127.0.0.1:8090:8090"]
+    volumes: ["./outbox:/gazebo/outbox:ro"]
