@@ -87,3 +87,21 @@ Run:
 ```bash
 docker compose run --rm dynamic-demo
 ```
+
+
+## Cooperative autonomy E2E
+
+The drone/rover scenario verifies:
+
+- shared world state with heterogeneous robots;
+- shared tracked objects;
+- capability-based task assignment;
+- distance-aware assignment among compatible robots;
+- predicted inter-robot conflict detection;
+- deterministic coordination directives.
+
+Run:
+
+```bash
+docker compose run --rm cooperative-demo
+```
