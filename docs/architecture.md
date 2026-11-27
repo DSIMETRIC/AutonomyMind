@@ -157,3 +157,22 @@ flowchart LR
 ```
 
 The fusion reference implementation rejects temporally misaligned pairs, transforms LiDAR points into the camera frame, projects them with calibrated intrinsics, associates projected points with 2-D detections, and publishes 3-D observations with explicit uncertainty and provenance.
+
+
+## 8. Temporal 3D tracking
+
+```mermaid
+flowchart LR
+  F[Fused 3D Observations] --> T[3D Multi-Object Tracker]
+  T --> ID[Persistent track_id]
+  T --> V[Velocity estimate]
+  T --> C[Propagated covariance]
+  T --> P[Short-horizon prediction]
+  ID --> WM[World Model]
+  V --> WM
+  C --> WM
+  P --> WM
+  WM --> PLAN[Planning / Decision]
+```
+
+The reference tracker uses deterministic nearest-neighbor association with constant-velocity prediction, semantic-label compatibility, configurable 3-D gating, one-to-one assignment, and bounded track lifetime. This keeps the public baseline auditable while preserving the contract needed for future probabilistic or learned tracking.
