@@ -252,6 +252,7 @@ docker compose run --rm contract-check
 docker compose run --rm test
 docker compose run --rm demo
 docker compose run --rm dynamic-demo
+docker compose run --rm cooperative-demo
 docker compose run --rm ros-test
 ```
 
@@ -314,3 +315,33 @@ docker compose run --rm dynamic-demo
 ```
 
 The trace is written to `semantic_data/outbox/dynamic_trace.jsonl`.
+
+
+## Cooperative autonomy milestone
+
+The cooperative reference scenario demonstrates:
+
+```text
+Drone local state ----+
+                      +--> Shared World Model
+Rover local state ----+
+          |
+          +--> Shared tracks
+          +--> Mission tasks
+                    |
+                    v
+            Coordination Agent
+          /                     \
+ capability-based tasking   inter-robot conflict prediction
+          \                     /
+                    v
+             coordination directives
+```
+
+Run:
+
+```bash
+docker compose run --rm cooperative-demo
+```
+
+The current public policy is deliberately transparent: task assignment is capability- and distance-based, while predicted robot-to-robot conflicts generate explicit yield directives. Local robot safety remains independent and deterministic.
