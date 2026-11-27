@@ -1,0 +1,23 @@
+services:
+  isaac-compat:
+    image: ${ISAAC_SIM_IMAGE:?Set ISAAC_SIM_IMAGE to a supported NVIDIA Isaac Sim image}
+    network_mode: host
+    gpus: all
+    environment:
+      ACCEPT_EULA: ${ACCEPT_EULA:-N}
+      PRIVACY_CONSENT: ${PRIVACY_CONSENT:-N}
+    entrypoint: ["/bin/bash","-lc"]
+    command: ["./isaac-sim.compatibility_check.sh --/app/quitAfter=10 --no-window"]
+
+  isaac-sim:
+    image: ${ISAAC_SIM_IMAGE:?Set ISAAC_SIM_IMAGE to a supported NVIDIA Isaac Sim image}
+    network_mode: host
+    gpus: all
+    environment:
+      ACCEPT_EULA: ${ACCEPT_EULA:-N}
+      PRIVACY_CONSENT: ${PRIVACY_CONSENT:-N}
+    volumes:
+      - ./exchange:/workspace/autonomymind-exchange:rw
+      - ./scenarios:/workspace/autonomymind-scenarios:ro
+    entrypoint: ["/bin/bash","-lc"]
+    command: ["./runheadless.sh"]
