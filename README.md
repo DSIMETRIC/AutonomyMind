@@ -271,7 +271,9 @@ docker compose run --rm test
 Architecture diagrams: [docs/architecture.md](docs/architecture.md)  
 Platform matrix: [docs/platforms.md](docs/platforms.md)  
 Test strategy: [docs/testing.md](docs/testing.md)  
-Isaac bridge: [simulation/isaac/BRIDGE.md](simulation/isaac/BRIDGE.md)
+Isaac bridge: [simulation/isaac/BRIDGE.md](simulation/isaac/BRIDGE.md)  
+Real perception: [docs/perception.md](docs/perception.md)  
+Jetson deployment: [deploy/jetson/README.md](deploy/jetson/README.md)
 
 ## Status
 
