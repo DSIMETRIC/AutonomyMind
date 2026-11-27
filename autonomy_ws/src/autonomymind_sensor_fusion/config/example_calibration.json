@@ -1,0 +1,13 @@
+{
+  "camera": {
+    "fx": 600.0,
+    "fy": 600.0,
+    "cx": 320.0,
+    "cy": 240.0
+  },
+  "lidar_to_camera": {
+    "rotation_row_major": [1.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 1.0],
+    "translation_m": [0.0, 0.0, 0.0]
+  },
+  "note": "Illustrative development calibration only. Replace with measured calibration for real hardware."
+}
