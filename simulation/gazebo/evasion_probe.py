@@ -54,6 +54,7 @@ def main():
             if abs(q.x)>.05 or abs(q.y)>.05 or abs(p.z)>.09:status="unstable";break
             if any(latest[k][0].header.frame_id!="world_enu" for k in ("rover","drone","obstacle")):status="frame";break
             if max(abs(stamp(latest[k][0])-stamp(ego)) for k in ("drone","obstacle","scan"))>.35:status="sync";break
+            raw_z=p.z
             if -1e-6<=p.z<0:p.z=0.
             yaw=yaw_of(q)
             tx,ty=route[stage]
@@ -93,7 +94,7 @@ def main():
                 if not ready():break
             accepted=[a for a in options if a["accepted"] and a["name"]!="BRAKE"]
             chosen=min(accepted,key=lambda a:a["score"]) if accepted else None
-            trace.append({"x_m":p.x,"y_m":p.y,"yaw_rad":yaw,"waypoint":stage,"lidar_m":min(vals),"options":options,"selected":chosen["name"] if chosen else "BRAKE"})
+            trace.append({"x_m":p.x,"y_m":p.y,"raw_z_m":raw_z,"forwarded_z_m":p.z,"yaw_rad":yaw,"waypoint":stage,"lidar_m":min(vals),"options":options,"selected":chosen["name"] if chosen else "BRAKE"})
             save("running")
             if len(options)!=4 or not ready() or not chosen:status="no_authorized_motion";break
             send(chosen["v"],chosen["w"]);spin(.24);send()

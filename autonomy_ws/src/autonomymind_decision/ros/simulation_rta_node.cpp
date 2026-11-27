@@ -87,6 +87,15 @@ class SimulationRtaNode final:public rclcpp::Node {
     const auto result=adapter.assess_and_record(id_,q.sequence,requests,profile_,model_);
     a.recorded=result.recorded; a.reason=result.reason;
     if(a.recorded) last_accepted_=q.sequence;
+    else {
+      for(const auto& check : result.assessment.common_checks) {
+        RCLCPP_WARN(get_logger(),
+          "RTA rejection seq=%llu z=%.12g separation=%.6f terrain=%.12g traffic=%d terrain_ok=%d geofence=%d envelope=%d valid=%d",
+          static_cast<unsigned long long>(q.sequence),s.z,
+          check.predicted_min_separation_m,check.minimum_terrain_clearance_m,
+          check.traffic_safe,check.terrain_safe,check.geofence_safe,check.envelope_safe,check.valid);
+      }
+    }
   }
   std::string id_;
   VehicleProfile profile_;
