@@ -199,3 +199,26 @@ flowchart LR
 ```
 
 The public reference planner evaluates predicted relative motion over a finite horizon, produces multiple transparent candidates, validates them independently, and records the complete decision evidence for replay.
+
+
+## 10. Cooperative autonomy execution
+
+```mermaid
+flowchart TB
+  D[Drone Local Autonomy] --> SW[Shared World Model]
+  R[Rover Local Autonomy] --> SW
+  T[Shared 3D Tracks] --> SW
+  M[Mission Tasks] --> C[Coordination Agent]
+  SW --> C
+  C --> A[Capability + Distance Assignment]
+  C --> X[Inter-Robot Conflict Prediction]
+  A --> D
+  A --> R
+  X --> Y[Yield / Coordination Directives]
+  Y --> D
+  Y --> R
+  D --> DS[Drone Deterministic Safety]
+  R --> RS[Rover Deterministic Safety]
+```
+
+The shared coordination layer can recommend task allocation and deconfliction, but it does not bypass each vehicle's local deterministic safety authority.
