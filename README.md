@@ -211,9 +211,63 @@ AI agents must not bypass deterministic runtime-assurance checks.
 
 The current `autonomymind_decision` core remains the operational decision and evidence boundary for the public development baseline.
 
+## Reference vertical
+
+A first executable vertical is included:
+
+```text
+Synthetic / Isaac-compatible frame
+        ↓
+Perception Agent
+        ↓
+Observation
+        ↓
+World Model Agent
+        ↓
+WorldState
+        ↓
+Planning Agent
+        ↓
+AgentProposal
+        ↓
+Deterministic Safety
+        ↓
+SafetyDecision
+        ↓
+optional annotation request when confidence is low
+```
+
+Run it entirely in Docker:
+
+```bash
+docker compose run --rm contract-check
+docker compose run --rm test
+docker compose run --rm demo
+docker compose run --rm ros-test
+```
+
+For WSL / Ubuntu amd64:
+
+```bash
+export AUTONOMYMIND_PLATFORM=linux/amd64
+docker compose run --rm test
+```
+
+For Jetson Orin / Thor arm64:
+
+```bash
+export AUTONOMYMIND_PLATFORM=linux/arm64
+docker compose run --rm test
+```
+
+Architecture diagrams: [docs/architecture.md](docs/architecture.md)  
+Platform matrix: [docs/platforms.md](docs/platforms.md)  
+Test strategy: [docs/testing.md](docs/testing.md)  
+Isaac bridge: [simulation/isaac/BRIDGE.md](simulation/isaac/BRIDGE.md)
+
 ## Status
 
-AutonomyMind is under active development. Interfaces and APIs may evolve while the agent contracts, simulation integration, semantic-data workflows, and multi-robot coordination stack are consolidated.
+AutonomyMind is under active development. The public reference vertical is intentionally simple and deterministic so contracts, Docker deployment, CI, simulation integration, and safety boundaries can evolve without hiding behavior behind a monolithic model.
 
 ## License
 
