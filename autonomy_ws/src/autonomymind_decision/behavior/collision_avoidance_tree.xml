@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Human-readable assurance mirror. Runtime tree is statically compiled C++. -->
+<BehaviorTree ID="CollisionAvoidance">
+  <Sequence name="HandleTrafficConflict">
+    <Condition ID="IsTrafficConflict"/>
+    <Action ID="GenerateCandidates" candidates="LEFT,RIGHT,CLIMB"/>
+    <Action ID="PredictMinimumSeparation"/>
+    <Action ID="DeterministicRTACheck"/>
+    <Action ID="SelectSafestValidatedCandidate"/>
+  </Sequence>
+</BehaviorTree>
