@@ -1,0 +1,27 @@
+# Simulation-only assessment, never an executable command.
+string vehicle_id
+string frame_id
+int32 odom_stamp_sec
+uint32 odom_stamp_nanosec
+uint64 sequence
+float64 sample_dt_s
+float64[] x_m
+float64[] y_m
+float64[] z_m
+float64 peak_speed_mps
+float64 peak_vertical_speed_mps
+float64 peak_accel_mps2
+float64 peak_jerk_mps3
+float64 peak_yaw_rate_dps
+float64 peak_bank_angle_deg
+# Relative positions and velocities, expressed in world ENU, triples per threat.
+float64[] threat_position_m
+float64[] threat_velocity_mps
+bool environment_valid
+bool communication_valid
+---
+bool recorded
+string reason
+string profile_id
+uint64 sequence
+float64 state_receipt_age_s

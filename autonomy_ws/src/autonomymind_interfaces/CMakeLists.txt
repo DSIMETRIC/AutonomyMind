@@ -10,6 +10,7 @@ rosidl_generate_interfaces(${PROJECT_NAME}
   "msg/AgentProposal.msg"
   "msg/SafetyCheck.msg"
   "msg/SafetyDecision.msg"
+  "srv/AssessSimulationTrajectory.srv"
 )
 
 ament_export_dependencies(rosidl_default_runtime)

@@ -45,6 +45,17 @@ jobs:
           source install/setup.bash
           colcon test --packages-select autonomymind_interfaces autonomymind_decision --event-handlers console_direct+
           colcon test-result --verbose
+      - name: Synthetic ROS 2 simulation RTA smoke
+        shell: bash
+        run: |
+          set -eo pipefail
+          source /opt/ros/jazzy/setup.bash
+          source ros_ws/install/setup.bash
+          export ROS_DOMAIN_ID=73
+          ros2 run autonomymind_decision simulation_rta_node --ros-args -r __ns:=/autonomymind_sim &
+          pid=$!
+          trap 'kill "$pid" 2>/dev/null || true' EXIT
+          python3 simulation/isaac/closed_loop/ros_smoke.py
       - name: Install dashboard browser
         run: |
           npm install --no-save playwright@1.55.0

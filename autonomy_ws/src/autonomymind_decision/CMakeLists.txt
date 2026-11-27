@@ -6,6 +6,9 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
 find_package(ament_cmake REQUIRED)
+find_package(rclcpp REQUIRED)
+find_package(nav_msgs REQUIRED)
+find_package(autonomymind_interfaces REQUIRED)
 find_package(Python3 COMPONENTS Interpreter REQUIRED)
 
 set(GEN_DIR "${CMAKE_CURRENT_BINARY_DIR}/generated/autonomymind")
@@ -56,6 +59,12 @@ install(TARGETS autonomymind_decision_core autonomymind_decision_c_api
   ARCHIVE DESTINATION lib
   LIBRARY DESTINATION lib
   RUNTIME DESTINATION lib/${PROJECT_NAME})
+add_executable(simulation_rta_node ros/simulation_rta_node.cpp)
+add_dependencies(simulation_rta_node generate_interface_limits)
+target_link_libraries(simulation_rta_node PRIVATE autonomymind_decision_core)
+ament_target_dependencies(simulation_rta_node rclcpp nav_msgs autonomymind_interfaces)
+target_compile_options(simulation_rta_node PRIVATE -Wall -Wextra -Wpedantic -Werror)
+install(TARGETS simulation_rta_node DESTINATION lib/${PROJECT_NAME})
 install(DIRECTORY core/include/ DESTINATION include)
 install(FILES "${GEN_HDR}" DESTINATION include/autonomymind)
 install(DIRECTORY config/ DESTINATION share/${PROJECT_NAME}/config)
