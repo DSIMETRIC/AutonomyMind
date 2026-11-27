@@ -19,6 +19,12 @@ on:
       - 'compose.yaml'
       - 'compose.vision.yaml'
       - 'deploy/**'
+      - 'dashboard/**'
+      - 'Dockerfile.dashboard'
+      - 'compose.demo.yaml'
+      - 'dashboard/**'
+      - 'Dockerfile.dashboard'
+      - 'compose.demo.yaml'
       - '.github/workflows/autonomymind-platform-ci.yml'
   pull_request:
     paths:
@@ -60,6 +66,28 @@ jobs:
         run: docker build -f Dockerfile.vision -t autonomymind/vision:ci .
       - name: YOLO postprocess tests
         run: docker run --rm --entrypoint python autonomymind/vision:ci -m unittest discover -s /workspace/tests/vision -p 'test_*.py' -v
+
+  dashboard-smoke:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build mission and dashboard images
+        run: docker compose -f compose.demo.yaml build
+      - name: Generate mission trace
+        run: docker compose -f compose.demo.yaml run --rm mission
+      - name: Start dashboard
+        run: docker compose -f compose.demo.yaml up -d dashboard
+      - name: Verify dashboard and trace
+        run: |
+          for i in {1..20}; do
+            if curl -fsS http://localhost:8080/ >/tmp/dashboard.html; then break; fi
+            sleep 1
+          done
+          grep -q "AutonomyMind Mission Dashboard" /tmp/dashboard.html
+          curl -fsS http://localhost:8080/trace/mission_trace.jsonl | grep -q '"event_type": "mission_step"'
+      - name: Stop dashboard
+        if: always()
+        run: docker compose -f compose.demo.yaml down -v
 
   ros-tests:
     runs-on: ubuntu-24.04

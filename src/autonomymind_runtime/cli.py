@@ -3,6 +3,8 @@ from .isaac_adapter import IsaacScenarioAdapter
 from .pipeline import AutonomyPipeline
 from .dynamic_pipeline import DynamicAvoidancePipeline
 from .cooperative_pipeline import CooperativePipeline
+from .mission_demo import run_mission
+from .replay import summarize_trace
 
 def contract_check():
     root=pathlib.Path("/workspace/orchestration/contracts")
@@ -49,12 +51,24 @@ def cooperative_demo(scenario: str):
     results=[pipe.step(f) for f in frames]
     print(json.dumps(results,indent=2,sort_keys=True))
 
+def mission_demo(scenario: str, trace: str):
+    events=run_mission(scenario,trace)
+    print(json.dumps({"events":len(events),"trace":trace,"summary":summarize_trace(trace)},indent=2,sort_keys=True))
+
+def replay_summary(trace: str):
+    print(json.dumps(summarize_trace(trace),indent=2,sort_keys=True))
+
 def main():
     p=argparse.ArgumentParser()
     sub=p.add_subparsers(dest="cmd",required=True)
     d=sub.add_parser("demo")
     d.add_argument("--scenario",required=True)
     d.add_argument("--outbox",default="/tmp/autonomymind-outbox")
+    md=sub.add_parser("mission-demo")
+    md.add_argument("--scenario",required=True)
+    md.add_argument("--trace",required=True)
+    rs=sub.add_parser("replay-summary")
+    rs.add_argument("--trace",required=True)
     cd=sub.add_parser("cooperative-demo")
     cd.add_argument("--scenario",required=True)
     dd=sub.add_parser("dynamic-demo")
@@ -68,6 +82,10 @@ def main():
         dynamic_demo(a.scenario,a.trace)
     elif a.cmd=="cooperative-demo":
         cooperative_demo(a.scenario)
+    elif a.cmd=="mission-demo":
+        mission_demo(a.scenario,a.trace)
+    elif a.cmd=="replay-summary":
+        replay_summary(a.trace)
     else:
         contract_check()
 

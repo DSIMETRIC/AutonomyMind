@@ -105,3 +105,14 @@ Run:
 ```bash
 docker compose run --rm cooperative-demo
 ```
+
+
+## Dashboard smoke test
+
+CI builds both the mission runtime and dashboard images, generates a real mission trace, starts the dashboard container, and verifies:
+
+- the HTML dashboard is reachable;
+- the trace endpoint is reachable;
+- the trace contains mission-step events.
+
+This keeps visualization tied to the same trace contract used by replay.

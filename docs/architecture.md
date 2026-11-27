@@ -222,3 +222,23 @@ flowchart TB
 ```
 
 The shared coordination layer can recommend task allocation and deconfliction, but it does not bypass each vehicle's local deterministic safety authority.
+
+
+## 11. Demo and replay architecture
+
+```mermaid
+flowchart LR
+  ISAAC[Isaac Sim / Deterministic Fixture] --> M[Mission Runtime]
+  M --> SW[Shared World + Coordination]
+  M --> DA[Dynamic Avoidance]
+  SW --> TRACE[Mission JSONL Trace]
+  DA --> TRACE
+  TRACE --> REPLAY[Replay API]
+  TRACE --> DASH[Mission Dashboard]
+  DASH --> ROBOTS[Robot State]
+  DASH --> TRACKS[Shared Tracks]
+  DASH --> TASKS[Assignments]
+  DASH --> CAND[Candidate + Safety Evidence]
+```
+
+The dashboard reads only the recorded trace. This makes demonstrations reproducible and allows the same UI to inspect simulation, CI, hardware, or field logs without coupling visualization to the live autonomy process.

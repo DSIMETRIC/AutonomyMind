@@ -1,0 +1,31 @@
+services:
+  mission:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: autonomymind/runtime:dev
+    platform: ${AUTONOMYMIND_PLATFORM:-linux/amd64}
+    command:
+      - mission-demo
+      - --scenario
+      - /workspace/simulation/isaac/scenarios/mission_drone_rover_dynamic.json
+      - --trace
+      - /trace/mission_trace.jsonl
+    volumes:
+      - mission-trace:/trace
+
+  dashboard:
+    build:
+      context: .
+      dockerfile: Dockerfile.dashboard
+    image: autonomymind/dashboard:dev
+    ports:
+      - "${AUTONOMYMIND_DASHBOARD_PORT:-8080}:8080"
+    volumes:
+      - mission-trace:/srv/trace:ro
+    depends_on:
+      mission:
+        condition: service_completed_successfully
+
+volumes:
+  mission-trace:

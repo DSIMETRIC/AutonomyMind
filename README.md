@@ -345,3 +345,34 @@ docker compose run --rm cooperative-demo
 ```
 
 The current public policy is deliberately transparent: task assignment is capability- and distance-based, while predicted robot-to-robot conflicts generate explicit yield directives. Local robot safety remains independent and deterministic.
+
+
+## Mission dashboard demo
+
+A presentation-ready deterministic demo combines the cooperative drone/rover scenario with dynamic obstacle avoidance, candidate safety evidence, task allocation, and replay.
+
+Start the complete stack:
+
+```bash
+docker compose -f compose.demo.yaml up --build
+```
+
+Then open:
+
+```text
+http://localhost:8080
+```
+
+The mission container first writes a versioned JSONL trace. The dashboard then replays each mission step and shows:
+
+- drone and rover state;
+- shared tracks;
+- task assignments;
+- coordination conflicts/directives;
+- GO / BRAKE / LEFT / RIGHT candidates;
+- candidate priority and confidence;
+- deterministic safety status;
+- selected maneuver;
+- raw trace evidence.
+
+The checked-in scenario is deterministic and CI-friendly. Isaac Sim can replace the fixture as the upstream sensor/world source through the existing Isaac integration boundary without changing the trace or dashboard contract.
