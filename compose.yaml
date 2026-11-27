@@ -47,3 +47,15 @@ services:
       - /workspace/semantic_data/outbox/dynamic_trace.jsonl
     volumes:
       - ./semantic_data/outbox:/workspace/semantic_data/outbox
+
+
+  cooperative-demo:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: autonomymind/runtime:dev
+    platform: ${AUTONOMYMIND_PLATFORM:-linux/amd64}
+    command:
+      - cooperative-demo
+      - --scenario
+      - /workspace/simulation/isaac/scenarios/cooperative_drone_rover.json
