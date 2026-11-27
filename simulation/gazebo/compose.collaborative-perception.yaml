@@ -1,0 +1,34 @@
+# Standalone trusted Linux host reference; no ROS-to-Gazebo command bridge.
+x-sensor: &sensor
+  image: autonomymind/gazebo:dev
+  network_mode: host
+  ipc: host
+  environment:
+    ROS_DOMAIN_ID: "81"
+    GZ_PARTITION: autonomymind_collaborative_perception
+services:
+  gazebo:
+    <<: *sensor
+    environment:
+      ROS_DOMAIN_ID: "81"
+      GZ_PARTITION: autonomymind_collaborative_perception
+      LIBGL_ALWAYS_SOFTWARE: "1"
+    command: ["bash","-lc","source /opt/ros/jazzy/setup.bash && gz sim -s -r --headless-rendering /gazebo/worlds/collaborative_perception.sdf"]
+  bridge:
+    <<: *sensor
+    command: ["bash","-lc","source /opt/ros/jazzy/setup.bash && ros2 run ros_gz_bridge parameter_bridge --ros-args -p config_file:=/gazebo/collaborative_bridge.yaml"]
+  world:
+    <<: *sensor
+    command: ["bash","-lc","source /opt/ros/jazzy/setup.bash && PYTHONPATH=/opt/autonomymind/src python3 -m autonomymind_runtime.world_agent --output /gazebo/outbox/collaborative_world.json"]
+    volumes: ["./outbox:/gazebo/outbox"]
+  rover-sensor:
+    <<: *sensor
+    command: ["bash","-lc","source /opt/ros/jazzy/setup.bash && PYTHONPATH=/opt/autonomymind/src python3 /gazebo/collaborative_sensor.py --id rover --odom /gazebo/rover/odometry --scan /mobile/scan --offset .45 0 .65"]
+  drone-sensor:
+    <<: *sensor
+    command: ["bash","-lc","source /opt/ros/jazzy/setup.bash && PYTHONPATH=/opt/autonomymind/src python3 /gazebo/collaborative_sensor.py --id drone --odom /gazebo/drone/odometry --scan /fleet/drone/scan --offset .3 0 0"]
+  probe:
+    <<: *sensor
+    profiles: ["test"]
+    command: ["bash","-lc","source /opt/ros/jazzy/setup.bash && PYTHONPATH=/opt/autonomymind/src python3 /gazebo/collaborative_probe.py"]
+    volumes: ["./outbox:/gazebo/outbox"]

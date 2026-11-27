@@ -173,6 +173,10 @@ The C++ reference assessment service supports externally configured profile limi
 
 A read-only reference probe projects live simulated LiDAR returns into the independent DDS world model, queries a snapshot, replans A* and submits a first-segment proposal to the C++ rover assessment service. See [sensor-world experiment](docs/sensor-world.md). Execution pending; no autonomous motion or multi-vehicle sensor fusion claimed.
 
+## Collaborative perception reference
+
+Two independent Gazebo sensor producers contribute live simulated LiDAR evidence to a shared DDS world service. A probe checks the occupied-cell union and additional evidence from a second source. See [collaborative perception](docs/collaborative-perception.md). Stationary reference only; execution pending.
+
 ## Documentation
 
 - [Architecture and roadmap](docs/architecture.md)
