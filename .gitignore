@@ -1,0 +1,43 @@
+# ROS / colcon
+autonomy_ws/build/
+autonomy_ws/install/
+autonomy_ws/log/
+
+# Python
+**/__pycache__/
+*.py[cod]
+.pytest_cache/
+
+# IDE / OS
+.vscode/
+.idea/
+.DS_Store
+
+# Runtime / recorded data
+**/data/bags/*
+**/data/logs/*
+**/data/datasets/*
+**/data/maps/*
+
+# AI weights / generated engines
+*.engine
+*.plan
+*.onnx
+*.pt
+*.pth
+*.safetensors
+*.gguf
+
+# Environment / secrets
+.env
+.env.*
+*.key
+*.pem
+*.p12
+*.pfx
+
+# Proprietary/local installers and archives
+*.deb
+*.run
+*.tar
+*.tar.gz
