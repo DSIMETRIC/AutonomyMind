@@ -135,6 +135,10 @@ docker compose run --build --rm industrial-pilot
 
 See [industrial pilot and acceptance gates](docs/industrial-pilot.md).
 
+## Agent Runtime — reference kernel
+
+The first executable in-process agent kernel supports registration, capabilities, event contracts, discovery, expiry and delivery audit. Run `docker compose run --build --rm agent-pilot`. This wraps the offline mission pilot; distributed transport and learned agents remain pending. See [Agent Runtime](docs/agent-runtime.md).
+
 ## Documentation
 
 - [Architecture and roadmap](docs/architecture.md)

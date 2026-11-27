@@ -70,3 +70,14 @@ services:
     command: ["--scenario","/workspace/simulation/pilots/industrial_inspection.json","--output","/workspace/semantic_data/outbox/industrial_pilot.json"]
     volumes:
       - ./semantic_data/outbox:/workspace/semantic_data/outbox
+
+  agent-pilot:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: autonomymind/runtime:dev
+    platform: ${AUTONOMYMIND_PLATFORM:-linux/amd64}
+    entrypoint: ["python","-m","autonomymind_runtime.agent_pilot"]
+    command: ["--scenario","/workspace/simulation/pilots/industrial_inspection.json","--output","/workspace/semantic_data/outbox/agent_pilot.json"]
+    volumes:
+      - ./semantic_data/outbox:/workspace/semantic_data/outbox
