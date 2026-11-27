@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>AutonomyMind Decision Full RTA</title>
+  <style>
+    body { font-family: sans-serif; margin: 24px; background: #111; color: #eee; }
+    .candidate { border: 1px solid #555; padding: 12px; margin: 10px 0; }
+    .selected { border-width: 3px; }
+    .row { display: grid; grid-template-columns: 180px 1fr; gap: 8px; }
+  </style>
+</head>
+<body>
+  <h1>AutonomyMind Decision / Full RTA</h1>
+  <div id="summary"></div>
+  <div id="ml"></div>
+  <div id="candidates"></div>
+  <script src="decision_dashboard.js"></script>
+  <script>
+    async function loadEvidence() {
+      const response = await fetch("evidence.json", { cache: "no-store" });
+      const evidence = await response.json();
+      const model = buildDecisionViewModel(evidence);
+
+      document.getElementById("summary").textContent =
+        "Decision: " + model.decision +
+        " | Samples: " + model.samples +
+        " | Full-RTA selected samples: " + model.fullRtaSamples;
+
+      const ml = document.getElementById("ml");
+      ml.textContent =
+        "ML: " + (model.ml.enabled ? "ENABLED" : "DISABLED") +
+        " | model: " + model.ml.modelName + "@" + model.ml.modelVersion +
+        " | confidence: " + model.ml.confidence.toFixed(3) +
+        " | used: " + (model.ml.usedForSelection ? "YES" : "NO") +
+        " | sha256: " + model.ml.modelSha256;
+
+      const root = document.getElementById("candidates");
+      model.candidates.forEach((candidate) => {
+        const card = document.createElement("div");
+        card.className = "candidate" + (candidate.selected ? " selected" : "");
+        card.dataset.candidate = candidate.name;
+        card.innerHTML =
+          "<h2>" + candidate.name + (candidate.selected ? " — SELECTED" : "") + "</h2>" +
+          "<div class='row'><span>Dynamic</span><span>" + candidate.dynamic + "</span></div>" +
+          "<div class='row'><span>Traffic</span><span>" + candidate.traffic + "</span></div>" +
+          "<div class='row'><span>Terrain</span><span>" + candidate.terrain + "</span></div>" +
+          "<div class='row'><span>Geofence</span><span>" + candidate.geofence + "</span></div>" +
+          "<div class='row'><span>Envelope</span><span>" + candidate.envelope + "</span></div>" +
+          "<div class='row'><span>Full RTA</span><span>" + candidate.fullRta + "</span></div>" +
+          "<div class='row'><span>Min separation (m)</span><span>" + candidate.minSeparationM.toFixed(2) + "</span></div>" +
+          "<div class='row'><span>Terrain clearance (m)</span><span>" + candidate.terrainClearanceM.toFixed(2) + "</span></div>" +
+          "<div class='row'><span>Peak yaw rate (deg/s)</span><span>" + candidate.peakYawRateDps.toFixed(2) + "</span></div>" +
+          "<div class='row'><span>Peak bank (deg)</span><span>" + candidate.peakBankAngleDeg.toFixed(2) + "</span></div>";
+        root.appendChild(card);
+      });
+    }
+    loadEvidence();
+  </script>
+</body>
+</html>
