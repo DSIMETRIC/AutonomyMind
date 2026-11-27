@@ -1,0 +1,48 @@
+{
+  "schema_version": "1.0",
+  "scenario_id": "mission-drone-rover-dynamic-v1",
+  "frames": [
+    {
+      "timestamp_s": 0.0,
+      "robots": [
+        {"robot_id":"drone-01","robot_type":"drone","position_m":[0.0,0.0,4.0],"velocity_mps":[1.0,0.0,0.0],"capabilities":["survey","inspect"],"available":true},
+        {"robot_id":"rover-01","robot_type":"rover","position_m":[0.0,0.0,0.0],"velocity_mps":[1.0,0.0,0.0],"capabilities":["inspect","carry"],"available":true}
+      ],
+      "tasks": [
+        {"task_id":"survey-zone-a","task_type":"survey","target_position_m":[8.0,4.0,5.0],"required_capabilities":["survey"],"priority":90},
+        {"task_id":"inspect-object","task_type":"inspect","target_position_m":[6.0,0.0,0.0],"required_capabilities":["inspect"],"priority":70}
+      ],
+      "tracks": [
+        {"track_id":"track-person-01","label":"person","position_m":[4.0,2.5,0.0],"velocity_mps":[0.0,-0.8,0.0],"confidence":0.95}
+      ]
+    },
+    {
+      "timestamp_s": 1.0,
+      "robots": [
+        {"robot_id":"drone-01","robot_type":"drone","position_m":[1.0,0.0,4.0],"velocity_mps":[1.0,0.0,0.0],"capabilities":["survey","inspect"],"available":true},
+        {"robot_id":"rover-01","robot_type":"rover","position_m":[1.0,0.0,0.0],"velocity_mps":[1.0,0.0,0.0],"capabilities":["inspect","carry"],"available":true}
+      ],
+      "tasks": [
+        {"task_id":"survey-zone-a","task_type":"survey","target_position_m":[8.0,4.0,5.0],"required_capabilities":["survey"],"priority":90},
+        {"task_id":"inspect-object","task_type":"inspect","target_position_m":[6.0,0.0,0.0],"required_capabilities":["inspect"],"priority":70}
+      ],
+      "tracks": [
+        {"track_id":"track-person-01","label":"person","position_m":[4.0,1.7,0.0],"velocity_mps":[0.0,-0.8,0.0],"confidence":0.95}
+      ]
+    },
+    {
+      "timestamp_s": 2.0,
+      "robots": [
+        {"robot_id":"drone-01","robot_type":"drone","position_m":[2.0,0.0,4.0],"velocity_mps":[1.0,0.0,0.0],"capabilities":["survey","inspect"],"available":true},
+        {"robot_id":"rover-01","robot_type":"rover","position_m":[2.0,0.0,0.0],"velocity_mps":[1.0,0.0,0.0],"capabilities":["inspect","carry"],"available":true}
+      ],
+      "tasks": [
+        {"task_id":"survey-zone-a","task_type":"survey","target_position_m":[8.0,4.0,5.0],"required_capabilities":["survey"],"priority":90},
+        {"task_id":"inspect-object","task_type":"inspect","target_position_m":[6.0,0.0,0.0],"required_capabilities":["inspect"],"priority":70}
+      ],
+      "tracks": [
+        {"track_id":"track-person-01","label":"person","position_m":[4.0,0.9,0.0],"velocity_mps":[0.0,-0.8,0.0],"confidence":0.95}
+      ]
+    }
+  ]
+}
