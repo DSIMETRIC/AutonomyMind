@@ -161,6 +161,10 @@ Optional loopback model-server adapters support LLM advisory ranking in the DDS 
 
 A DDS evidence service now accepts bounded, timestamped metric observations and member states, keeps VLM semantic reports separate, and exposes provenance-aware snapshots with expiry. See [shared world model](docs/shared-world.md). Live sensor producers, cross-source fusion, map exchange and planning consumption remain pending; integration probe not yet executed.
 
+## Cooperative kinematic integration experiment
+
+The configurable reference loop integrates shared evidence, mission allocation, A* and model-specific propagation for heterogeneous vehicles. Run `docker compose run --build --rm cooperative-kinematic`. See [integration scope](docs/cooperative-kinematic.md). No physics simulator, DDS, learned inference or C++ RTA integration is claimed for this experiment; execution pending.
+
 ## Documentation
 
 - [Architecture and roadmap](docs/architecture.md)

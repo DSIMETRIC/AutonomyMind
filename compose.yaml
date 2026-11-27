@@ -81,3 +81,13 @@ services:
     command: ["--scenario","/workspace/simulation/pilots/industrial_inspection.json","--output","/workspace/semantic_data/outbox/agent_pilot.json"]
     volumes:
       - ./semantic_data/outbox:/workspace/semantic_data/outbox
+
+  cooperative-kinematic:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: autonomymind/runtime:dev
+    platform: ${AUTONOMYMIND_PLATFORM:-linux/amd64}
+    entrypoint: ["python","-m","autonomymind_runtime.cooperative_sim"]
+    command: ["--scenario","/workspace/simulation/pilots/cooperative_kinematic.json","--output","/workspace/semantic_data/outbox/cooperative_kinematic.json"]
+    volumes: ["./semantic_data/outbox:/workspace/semantic_data/outbox"]
