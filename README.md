@@ -251,6 +251,7 @@ Run it entirely in Docker:
 docker compose run --rm contract-check
 docker compose run --rm test
 docker compose run --rm demo
+docker compose run --rm dynamic-demo
 docker compose run --rm ros-test
 ```
 
@@ -282,3 +283,34 @@ AutonomyMind is under active development. The public reference vertical is inten
 ## License
 
 AutonomyMind is distributed under the Apache License 2.0. See `LICENSE` and `NOTICE`.
+
+
+## v0.1 dynamic avoidance milestone
+
+The executable v0.1 reference scenario demonstrates:
+
+```text
+moving 3D track
+    ↓
+dynamic world model
+    ↓
+closest-approach / TTC risk
+    ↓
+GO / BRAKE / LEFT / RIGHT candidates
+    ↓
+deterministic candidate safety checks
+    ↓
+decision ranking
+    ↓
+validated maneuver
+    ↓
+JSONL episode trace
+```
+
+Run:
+
+```bash
+docker compose run --rm dynamic-demo
+```
+
+The trace is written to `semantic_data/outbox/dynamic_trace.jsonl`.
