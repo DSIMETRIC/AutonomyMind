@@ -1,0 +1,19 @@
+services:
+  gazebo:
+    command: ["bash","-lc","source /opt/ros/jazzy/setup.bash && gz sim -s -r --headless-rendering /gazebo/worlds/mobile_reference.sdf"]
+    environment:
+      GZ_PARTITION: autonomymind_mobile
+      ROS_DOMAIN_ID: "75"
+      LIBGL_ALWAYS_SOFTWARE: "1"
+  rta:
+    environment:
+      ROS_DOMAIN_ID: "75"
+  bridge:
+    environment:
+      ROS_DOMAIN_ID: "75"
+      GZ_PARTITION: autonomymind_mobile
+    command: ["bash","-lc","source /opt/ros/jazzy/setup.bash && ros2 run ros_gz_bridge parameter_bridge --ros-args -p config_file:=/gazebo/mobile_bridge.yaml"]
+  probe:
+    environment:
+      ROS_DOMAIN_ID: "75"
+    command: ["bash","-lc","source /opt/ros/jazzy/setup.bash && source /workspace/install/setup.bash && python3 /gazebo/sensor_probe.py"]
