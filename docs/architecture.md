@@ -176,3 +176,26 @@ flowchart LR
 ```
 
 The reference tracker uses deterministic nearest-neighbor association with constant-velocity prediction, semantic-label compatibility, configurable 3-D gating, one-to-one assignment, and bounded track lifetime. This keeps the public baseline auditable while preserving the contract needed for future probabilistic or learned tracking.
+
+
+## 9. Dynamic avoidance milestone
+
+```mermaid
+flowchart LR
+  TRACKS[Persistent 3D Tracks] --> WM[Dynamic World Model]
+  WM --> CP[Closest Approach / TTC]
+  CP --> GEN[Candidate Generator]
+  GEN --> GO[GO]
+  GEN --> B[BRAKE]
+  GEN --> L[LEFT]
+  GEN --> R[RIGHT]
+  GO --> RTA[Deterministic Safety]
+  B --> RTA
+  L --> RTA
+  R --> RTA
+  RTA --> DEC[Decision Agent]
+  DEC --> CMD[Validated Maneuver]
+  DEC --> TRACE[Episode Trace / Replay]
+```
+
+The public reference planner evaluates predicted relative motion over a finite horizon, produces multiple transparent candidates, validates them independently, and records the complete decision evidence for replay.
