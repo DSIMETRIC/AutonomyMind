@@ -1,0 +1,19 @@
+services:
+  gazebo:
+    command: ["bash","-lc","source /opt/ros/jazzy/setup.bash && gz sim -s -r --headless-rendering /gazebo/worlds/closed_loop_reference.sdf"]
+    environment:
+      GZ_PARTITION: autonomymind_closed_loop
+      ROS_DOMAIN_ID: "76"
+      LIBGL_ALWAYS_SOFTWARE: "1"
+  rta:
+    environment:
+      ROS_DOMAIN_ID: "76"
+  bridge:
+    environment:
+      ROS_DOMAIN_ID: "76"
+      GZ_PARTITION: autonomymind_closed_loop
+    command: ["bash","-lc","source /opt/ros/jazzy/setup.bash && ros2 run ros_gz_bridge parameter_bridge --ros-args -p config_file:=/gazebo/closed_loop_bridge.yaml"]
+  probe:
+    environment:
+      ROS_DOMAIN_ID: "76"
+    command: ["bash","-lc","source /opt/ros/jazzy/setup.bash && source /workspace/install/setup.bash && python3 /gazebo/closed_loop_probe.py"]

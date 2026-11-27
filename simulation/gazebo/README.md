@@ -29,3 +29,15 @@ docker compose -p autonomymind-mobile -f simulation/gazebo/compose.yaml -f simul
 ```
 
 The sensor probe requires three messages from each stream and basic image/range/IMU validity; results are saved to outbox/sensors.json. Headless Ogre2 uses software rendering for the first attempt, which may be unsupported or slow on some hosts; inspect simulator logs if RGB/LiDAR are absent. Do not treat sensor messages as validated object tracks. Physical wheel behavior, drone flight, moving obstacles, perception fusion and closed-loop RTA execution remain untested. No physical actuator connections.
+
+## Experimental closed-loop rover
+Separate Compose project and ROS domain 76. The simulator-only bridge enables one command topic. The world raises the LiDAR above the chassis and adds a front caster to improve stability. The probe checks advancing source stamps, receipt ages, alignment, pose, and forward scan; it calls the C++ reference RTA before each short forward pulse, and publishes zero between pulses and on exit. The reference threats are stationary simulator ground truth, not detected tracks. This is a bounded straight-line experiment, not a navigation stack. No independent watchdog exists if the process is killed or DDS fails; stop the simulation on failure. No physical hardware or host networking is configured. Do not connect this domain or topic to hardware.
+
+Run the base build first if needed:
+```bash
+docker compose -f simulation/gazebo/compose.yaml build rta
+docker compose -f simulation/gazebo/compose.yaml build gazebo
+docker compose -p autonomymind-loop -f simulation/gazebo/compose.yaml -f simulation/gazebo/compose.closed_loop.yaml up -d rta gazebo bridge
+docker compose -p autonomymind-loop -f simulation/gazebo/compose.yaml -f simulation/gazebo/compose.closed_loop.yaml run --rm probe
+```
+Stop/reset: same Compose flags with down. Results: outbox/closed_loop.json. Restart before repeat. PASS requires measured forward displacement, obstacle-related stop, final clearance and low longitudinal velocity. No collision-contact monitor, continuous-time assurance, independent watchdog or calibrated braking model yet. Neither this world nor probe has been executed on a simulator host.
