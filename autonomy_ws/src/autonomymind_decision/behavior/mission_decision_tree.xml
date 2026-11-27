@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Human-readable assurance mirror. Runtime tree is statically compiled C++. -->
+<BehaviorTree ID="MissionDecision">
+  <Fallback name="DecisionPriority">
+    <Sequence name="CriticalNavUnavailable">
+      <Condition ID="NavUnavailable"/>
+      <Action ID="Hold"/>
+    </Sequence>
+    <Sequence name="CriticalNavIntegrity">
+      <Condition ID="NavIntegrityCritical"/>
+      <Action ID="Hold"/>
+    </Sequence>
+    <Sequence name="TrafficAvoidance">
+      <Condition ID="TrafficConflict"/>
+      <SubTree ID="CollisionAvoidance"/>
+    </Sequence>
+    <Sequence name="NavDisagreement">
+      <Condition ID="PersistentNavDisagreement"/>
+      <Action ID="VerifyNav"/>
+    </Sequence>
+    <Sequence name="NavRedundancyDegraded">
+      <Condition ID="RedundancyLost"/>
+      <Action ID="DegradeNav"/>
+    </Sequence>
+    <Sequence name="NavIntegrityDegraded">
+      <Condition ID="NavIntegrityDegraded"/>
+      <Action ID="DegradeNav"/>
+    </Sequence>
+    <Sequence name="MissionRejoin">
+      <Condition ID="PathDeviation"/>
+      <Action ID="RejoinPath"/>
+    </Sequence>
+    <Action ID="ContinueMission"/>
+  </Fallback>
+</BehaviorTree>
