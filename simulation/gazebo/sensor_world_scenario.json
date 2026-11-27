@@ -1,0 +1,16 @@
+{
+  "map": {
+    "width": 40,
+    "height": 40,
+    "resolution": 0.5,
+    "origin": [
+      -10.25,
+      -10.25
+    ]
+  },
+  "goal": [
+    6,
+    0
+  ],
+  "clearance_m": 0.65
+}

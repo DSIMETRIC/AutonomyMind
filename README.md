@@ -169,6 +169,10 @@ The configurable reference loop integrates shared evidence, mission allocation, 
 
 The C++ reference assessment service supports externally configured profile limits and independent namespaced rover/multirotor instances. See [fleet RTA assessment](docs/fleet-rta.md). This is a read-only stationary Gazebo test; no cooperative movement or road-vehicle authorization is claimed.
 
+## Live Gazebo sensor evidence integration
+
+A read-only reference probe projects live simulated LiDAR returns into the independent DDS world model, queries a snapshot, replans A* and submits a first-segment proposal to the C++ rover assessment service. See [sensor-world experiment](docs/sensor-world.md). Execution pending; no autonomous motion or multi-vehicle sensor fusion claimed.
+
 ## Documentation
 
 - [Architecture and roadmap](docs/architecture.md)

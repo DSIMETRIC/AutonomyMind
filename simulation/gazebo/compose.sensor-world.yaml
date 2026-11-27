@@ -1,0 +1,36 @@
+# Standalone overlay on compose.yaml and compose.closed_loop.yaml, Linux trusted host only.
+services:
+  rta:
+    network_mode: host
+    ipc: host
+    environment:
+      ROS_DOMAIN_ID: "80"
+  gazebo:
+    network_mode: host
+    ipc: host
+    environment:
+      ROS_DOMAIN_ID: "80"
+      GZ_PARTITION: autonomymind_sensor_world
+  bridge:
+    network_mode: host
+    ipc: host
+    environment:
+      ROS_DOMAIN_ID: "80"
+      GZ_PARTITION: autonomymind_sensor_world
+  world:
+    image: autonomymind/gazebo:dev
+    network_mode: host
+    ipc: host
+    environment:
+      ROS_DOMAIN_ID: "80"
+    command: ["bash","-lc","source /opt/ros/jazzy/setup.bash && PYTHONPATH=/opt/autonomymind/src python3 -m autonomymind_runtime.world_agent --output /gazebo/outbox/shared_world.json"]
+    volumes: ["./outbox:/gazebo/outbox"]
+  sensor-world-probe:
+    image: autonomymind/gazebo:dev
+    network_mode: host
+    ipc: host
+    environment:
+      ROS_DOMAIN_ID: "80"
+    command: ["bash","-lc","source /opt/ros/jazzy/setup.bash && source /workspace/install/setup.bash && PYTHONPATH=/opt/autonomymind/src:$PYTHONPATH python3 /gazebo/sensor_world_probe.py"]
+    volumes: ["./outbox:/gazebo/outbox"]
+    depends_on: [bridge, world, rta]
