@@ -13,7 +13,10 @@ on:
       - 'autonomy_ws/src/autonomymind_interfaces/**'
       - 'Dockerfile'
       - 'Dockerfile.ros'
+      - 'Dockerfile.vision'
       - 'compose.yaml'
+      - 'compose.vision.yaml'
+      - 'deploy/**'
       - '.github/workflows/autonomymind-platform-ci.yml'
   pull_request:
     paths:
@@ -27,7 +30,10 @@ on:
       - 'autonomy_ws/src/autonomymind_interfaces/**'
       - 'Dockerfile'
       - 'Dockerfile.ros'
+      - 'Dockerfile.vision'
       - 'compose.yaml'
+      - 'compose.vision.yaml'
+      - 'deploy/**'
       - '.github/workflows/autonomymind-platform-ci.yml'
 
 jobs:
@@ -41,6 +47,15 @@ jobs:
         run: docker compose run --rm contract-check
       - name: Reference demo
         run: docker compose run --rm demo
+
+  vision-cpu-tests:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build CPU ONNX perception image
+        run: docker build -f Dockerfile.vision -t autonomymind/vision:ci .
+      - name: YOLO postprocess tests
+        run: docker run --rm --entrypoint python autonomymind/vision:ci -m unittest discover -s /workspace/tests/vision -p 'test_*.py' -v
 
   ros-tests:
     runs-on: ubuntu-24.04
