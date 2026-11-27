@@ -1,64 +1,220 @@
 # AutonomyMind
 
-AutonomyMind is a modular autonomy platform for cooperative drones, rovers, and robotic systems.
+AutonomyMind is an open, agentic autonomy architecture for cooperative drones, rovers, and robotic systems.
 
-It is designed to integrate multisensor perception, sensor fusion, deterministic and advisory decision-making, navigation, coordination, mission execution, simulation, and validation across heterogeneous robotic platforms.
+The platform is organized around four pillars:
 
-## Core principles
-
-- **Platform agnostic** — designed for aerial, ground, and other robotic systems.
-- **Sensor agnostic** — higher-level autonomy consumes stable interfaces rather than vendor-specific APIs.
-- **Multisensor by design** — perception and world-state estimation can combine cameras, LiDAR, radar, GNSS, IMU, ADS-B, and other sources.
-- **Deterministic safety boundary** — operational decision authority remains separate from advisory AI/ML components.
-- **Cooperative autonomy** — architecture intended to support coordinated multi-agent missions and distributed robotic systems.
-- **Modular ROS 2 architecture** — capabilities are developed as composable packages with explicit interfaces and validation.
-
-## Current public snapshot
-
-The initial public snapshot focuses on the decision and runtime-assurance core. Additional perception, sensor-fusion, navigation, coordination, and platform integrations will be added only after their dependencies and redistribution rights have been reviewed.
+1. **Agentic Autonomy** — specialized AI agents for perception, fusion, world modeling, planning, coordination, and decision support.
+2. **Simulation** — integrated simulation and synthetic-data workflows, with NVIDIA Isaac Sim as the primary simulation target.
+3. **Semantic Data** — annotation, dataset, map, and model workflows through a clean SemanticMap-compatible integration boundary.
+4. **Deterministic Safety** — operational safety and runtime-assurance checks remain outside unconstrained AI authority.
 
 ## Architecture
 
 ```text
-Sense
-  -> Perceive
-  -> Fuse / Understand
-  -> Decide
-  -> Coordinate
-  -> Navigate / Act
-  -> Verify
-  -> Adapt
+Real / Synthetic Sensors
+        |
+        v
+ Perception Agent
+        |
+        v
+ Sensor Fusion Agent
+        |
+        v
+ World Model / Semantic Memory
+        |
+        +--------------------+
+        |                    |
+        v                    v
+ Planning Agent       Coordination Agent
+        |                    |
+        +---------+----------+
+                  |
+                  v
+            Decision Agent
+                  |
+                  v
+      Deterministic Safety / RTA
+                  |
+                  v
+          Robot / Drone / Rover
 ```
 
-For cooperative systems:
+The AI layer may reason, rank, propose, explain, and coordinate. Safety-critical execution remains constrained by deterministic policies and runtime-assurance gates.
+
+## Closed-loop development
 
 ```text
-Robot / Drone / Rover
-        |
-   Local Autonomy
-        |
-  Shared World State
-        |
-Coordination / Mission
-        |
-Distributed Execution
+Real Data
+   |
+   v
+Semantic Annotation / Review
+   |
+   v
+Datasets + Model Registry
+   |
+   v
+Train / Adapt / Evaluate
+   |
+   v
+Autonomy Agents
+   |
+   v
+Decision + Safety
+   |
+   v
+Robot
+   ^
+   |
+Simulation / Isaac Sim
+   |
+   +--> Synthetic Data
+   +--> Edge Cases
+   +--> Regression Scenarios
+   +--> Evaluation
 ```
+
+Simulation failures and difficult edge cases can feed annotation and retraining workflows, creating a continuous improvement loop between data, simulation, and autonomy.
 
 ## Repository layout
 
 ```text
 AutonomyMind/
-├── README.md
-├── .gitignore
+├── agents/
+│   ├── perception_agent/
+│   ├── sensor_fusion_agent/
+│   ├── world_model_agent/
+│   ├── localization_agent/
+│   ├── planning_agent/
+│   ├── coordination_agent/
+│   ├── decision_agent/
+│   └── safety_agent/
+│
+├── simulation/
+│   └── isaac/
+│       ├── worlds/
+│       ├── scenarios/
+│       ├── robots/
+│       ├── sensors/
+│       ├── synthetic_data/
+│       └── evaluation/
+│
+├── semantic_data/
+│   ├── semanticmap_connector/
+│   ├── annotation_schemas/
+│   ├── datasets/
+│   ├── model_registry/
+│   └── evaluation/
+│
+├── orchestration/
+│   ├── agent_registry/
+│   ├── contracts/
+│   ├── events/
+│   └── observability/
+│
 └── autonomy_ws/
     └── src/
-        └── autonomymind_decision/
+        ├── autonomymind_common/
+        ├── autonomymind_perception/
+        ├── autonomymind_sensor_fusion/
+        ├── autonomymind_world_model/
+        ├── autonomymind_localization/
+        ├── autonomymind_navigation/
+        ├── autonomymind_coordination/
+        ├── autonomymind_mission/
+        ├── autonomymind_decision/
+        └── autonomymind_safety/
 ```
+
+## Agent model
+
+AutonomyMind uses specialized agents with narrow contracts rather than one monolithic model controlling the full stack.
+
+- **Perception Agent** — converts raw sensor streams into detections, semantic features, free-space estimates, and structured observations.
+- **Sensor Fusion Agent** — combines observations across cameras, LiDAR, radar, GNSS, IMU, and other sources.
+- **World Model Agent** — maintains semantic state, tracks, map context, confidence, provenance, and shared spatial memory.
+- **Localization Agent** — estimates platform state across GNSS, VIO, SLAM, and other localization sources.
+- **Planning Agent** — proposes routes, local trajectories, task plans, and recovery options.
+- **Coordination Agent** — coordinates heterogeneous robots and shared missions.
+- **Decision Agent** — ranks operational options and produces explainable recommendations.
+- **Safety Agent** — exposes deterministic safety evidence and interfaces to runtime-assurance logic; it does not replace the deterministic safety core.
+
+## Simulation
+
+`simulation/isaac/` is the integration surface for Isaac Sim scenarios, robots, sensors, synthetic data generation, and regression evaluation.
+
+The simulation layer is intended to support:
+
+- sensor simulation;
+- multi-robot scenarios;
+- synthetic perception datasets;
+- failure injection;
+- domain randomization;
+- scenario replay;
+- edge-case generation;
+- autonomy regression testing.
+
+Simulation assets and third-party components must retain their own licenses and redistribution terms.
+
+## Semantic data and annotation
+
+`semantic_data/` defines the public integration boundary for semantic annotation and dataset workflows.
+
+The connector is intentionally decoupled from any private annotation platform implementation. It should exchange versioned contracts for:
+
+- images and sensor frames;
+- annotation requests;
+- polygons, masks, tracks, and semantic geometry;
+- review status;
+- provenance;
+- model version;
+- dataset version;
+- evaluation results.
+
+No private repository code is vendored into AutonomyMind.
+
+## Cooperative autonomy
+
+AutonomyMind is designed for heterogeneous teams:
+
+```text
+Drone Agent Stack ----+
+Rover Agent Stack ----+--> Shared World Model
+Robot Agent Stack ----+          |
+                                v
+                         Coordination Agent
+                                |
+                                v
+                           Mission Agent
+                                |
+                                v
+                      Local Decision Agents
+                                |
+                                v
+                     Deterministic Safety
+```
+
+Each platform can maintain local autonomy while contributing to a shared world model and coordinated mission state.
+
+## Safety boundary
+
+AI agents may:
+
+- propose;
+- rank;
+- explain;
+- predict;
+- coordinate;
+- generate candidate plans.
+
+AI agents must not bypass deterministic runtime-assurance checks.
+
+The current `autonomymind_decision` core remains the operational decision and evidence boundary for the public development baseline.
 
 ## Status
 
-AutonomyMind is under active development. Interfaces and APIs may evolve while the public architecture is consolidated.
+AutonomyMind is under active development. Interfaces and APIs may evolve while the agent contracts, simulation integration, semantic-data workflows, and multi-robot coordination stack are consolidated.
 
-## Security and operational use
+## License
 
-Configuration values included in this repository are development and validation defaults. They must not be treated as vehicle- or mission-approved operational limits without independent engineering validation.
+AutonomyMind is distributed under the Apache License 2.0. See `LICENSE` and `NOTICE`.
