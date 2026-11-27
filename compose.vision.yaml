@@ -1,0 +1,28 @@
+services:
+  vision-cpu:
+    build:
+      context: .
+      dockerfile: Dockerfile.vision
+    image: autonomymind/vision:cpu
+    platform: linux/amd64
+    volumes:
+      - ./models:/models:ro
+      - ./data:/data:ro
+      - ./semantic_data/outbox:/out:rw
+    command:
+      - --model
+      - /models/detector.onnx
+      - --image
+      - /data/frame.jpg
+      - --labels
+      - /models/labels.txt
+      - --output
+      - /out/vision_observations.json
+
+  vision-test:
+    build:
+      context: .
+      dockerfile: Dockerfile.vision
+    image: autonomymind/vision:cpu
+    platform: linux/amd64
+    entrypoint: ["python","-m","unittest","discover","-s","/workspace/tests/vision","-p","test_*.py","-v"]
