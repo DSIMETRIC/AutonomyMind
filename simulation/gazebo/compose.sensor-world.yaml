@@ -23,7 +23,7 @@ services:
     ipc: host
     environment:
       ROS_DOMAIN_ID: "80"
-    command: ["bash","-lc","source /opt/ros/jazzy/setup.bash && PYTHONPATH=/opt/autonomymind/src python3 -m autonomymind_runtime.world_agent --output /gazebo/outbox/shared_world.json"]
+    command: ["bash","-lc","source /opt/ros/jazzy/setup.bash && PYTHONPATH=/opt/autonomymind/src:$PYTHONPATH python3 -m autonomymind_runtime.world_agent --output /gazebo/outbox/shared_world.json"]
     volumes: ["./outbox:/gazebo/outbox"]
   sensor-world-probe:
     image: autonomymind/gazebo:dev
