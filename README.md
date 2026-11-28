@@ -193,7 +193,11 @@ A bounded advisory scheduler detects continuous piecewise-linear 3D conflicts, s
 
 ## Distributed trajectory reservations
 
-A DDS advisory reservation service accepts complete synthetic fleet batches and exposes revision and expiry queries. See [distributed reservations](docs/distributed-reservations.md). Probe execution pending; no independent vehicle negotiation or motion authority.
+A DDS advisory reservation service accepts complete synthetic fleet batches and exposes revision and expiry queries. See [distributed reservations](docs/distributed-reservations.md). Operator-reported PASS: three members scheduled and revised, one initial conflict and zero remaining, stale/incomplete rejection and expiry. No independent vehicle negotiation or motion authority.
+
+## Integrated stationary autonomy preview
+
+Live Gazebo odometry feeds a read-only DDS reservation batch and separate C++ reference assessments for rover and multirotor. See [integrated preview](docs/integrated-preview.md). Execution pending; no motion or full closed-loop integration.
 
 ## Documentation
 

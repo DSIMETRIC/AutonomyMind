@@ -1,0 +1,41 @@
+# Overlay on base and fleet-rta; no command bridge, trusted local host.
+services:
+  rta:
+    network_mode: host
+    ipc: host
+    environment:
+      ROS_DOMAIN_ID: "82"
+  rta-drone:
+    network_mode: host
+    ipc: host
+    environment:
+      ROS_DOMAIN_ID: "82"
+  gazebo:
+    network_mode: host
+    ipc: host
+    environment:
+      ROS_DOMAIN_ID: "82"
+      GZ_PARTITION: autonomymind_integrated_preview
+  bridge:
+    network_mode: host
+    ipc: host
+    environment:
+      ROS_DOMAIN_ID: "82"
+      GZ_PARTITION: autonomymind_integrated_preview
+  reservations:
+    image: autonomymind/gazebo:dev
+    network_mode: host
+    ipc: host
+    environment:
+      ROS_DOMAIN_ID: "82"
+    command: ["bash","-lc","source /opt/ros/jazzy/setup.bash && PYTHONPATH=/opt/autonomymind/src:$$PYTHONPATH python3 -m autonomymind_runtime.reservation_agent --scenario /gazebo/integrated_preview.json --output /gazebo/outbox/integrated_reservation_state.json"]
+    volumes: ["./outbox:/gazebo/outbox"]
+  integrated-preview:
+    image: autonomymind/gazebo:dev
+    network_mode: host
+    ipc: host
+    environment:
+      ROS_DOMAIN_ID: "82"
+    command: ["bash","-lc","source /opt/ros/jazzy/setup.bash && source /workspace/install/setup.bash && PYTHONPATH=/opt/autonomymind/src:$$PYTHONPATH python3 /gazebo/integrated_preview_probe.py"]
+    volumes: ["./outbox:/gazebo/outbox"]
+    depends_on: [bridge,rta,rta-drone,reservations]

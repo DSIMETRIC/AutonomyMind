@@ -16,3 +16,5 @@ Evidence below is from operator-provided command outputs, not independently repr
 The last experiment increases occupied-cell evidence relative to rover-only by 4/9 (44.4%), not total environmental coverage. Vehicles were stationary; the drone was static. No autonomous simultaneous physical motion, certified safety, LLM/VLM execution or road fleet deployment is demonstrated. Full unit-suite result was not supplied; two reported groups of four tests passed.
 
 Single-goal collaborative planning: reported revision 1156, 9 local cells, 13 union, 4 remote additions, identical routes and zero invalidated cells. No collaborative route benefit demonstrated for this goal. Subsequent benchmark PASS: revision 170, 42 goals, 27 unchanged, 1 no shared route, 8 local unreachable, 6 alternate routes; 9 local cells, 4 remote additions. No motion or RTA assessment.
+
+DDS reservation probe: operator-reported PASS, 3 members, 1 initial conflict, 3 scheduled and 3 revised, 0 remaining geometric conflicts, stale revision and incomplete batch rejected, expiry observed. Synthetic proposals, no C++ RTA or motion. Standalone pilot output not supplied.
