@@ -183,6 +183,10 @@ A read-only DDS snapshot consumer compares local-only and shared-evidence A* rou
 
 See [reported workstation validation](docs/workstation-validation.md) for experimental results and scope.
 
+## Collaborative planning benchmark
+
+A configurable multi-goal evaluator measures route changes, unchanged routes and unreachable goals from one frozen live evidence snapshot. See [benchmark](docs/collaborative-benchmark.md). Execution pending.
+
 ## Documentation
 
 - [Architecture and roadmap](docs/architecture.md)

@@ -14,3 +14,5 @@ Evidence below is from operator-provided command outputs, not independently repr
 | Gazebo collaborative perception | PASS, revision 187, rover 9 cells, drone 8, shared 4, union 13, drone additional 4 |
 
 The last experiment increases occupied-cell evidence relative to rover-only by 4/9 (44.4%), not total environmental coverage. Vehicles were stationary; the drone was static. No autonomous simultaneous physical motion, certified safety, LLM/VLM execution or road fleet deployment is demonstrated. Full unit-suite result was not supplied; two reported groups of four tests passed.
+
+Single-goal collaborative planning: reported revision 1156, 9 local cells, 13 union, 4 remote additions, identical routes and zero invalidated cells. No collaborative route benefit demonstrated for this goal. Subsequent benchmark pending.
