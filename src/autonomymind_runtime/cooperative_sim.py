@@ -74,11 +74,12 @@ def run(s):
                 x,y=local.center(cell)
                 if any(math.hypot(x-o["position_m"][0],y-o["position_m"][1])<=o["radius_m"]+o["uncertainty_m"]+local.resolution/math.sqrt(2) and abs(state.z-o["position_m"][2])<=clearance+o["radius_m"]+o["uncertainty_m"] for o in observed):
                     local.occupied.add(cell)
-            route=global_path(local,(state.x,state.y),goal[:2],clearance)
+            route_clearance=clearance+local.resolution/math.sqrt(2)
+            route=global_path(local,(state.x,state.y),goal[:2],route_clearance)
             if not route:
                 decisions.append({"member":k,"status":"no_route"});continue
-            target=route[min(len(route)-1,max(1,math.ceil(p.max_speed_mps*dt/local.resolution)+1))]
-            if len(route)<=2:target=goal[:2]
+            # Follow the adjacent A* cell, rather than cutting across a corner.
+            target=route[1] if len(route)>1 else goal[:2]
             options=[]
             for speed in (0.,p.max_speed_mps/2,p.max_speed_mps):
                 for turn in (-p.max_turn_rad,-p.max_turn_rad/2,0.,p.max_turn_rad/2,p.max_turn_rad):
@@ -87,7 +88,7 @@ def run(s):
                         c=Control(forward=speed,turn=turn,vertical=vertical)
                         samples=[models.propagate(state,c,p,dt*j/8) for j in range(1,9)]
                         end=samples[-1]
-                        if any(not local.traversable(local.cell(q.x,q.y),clearance+local.resolution/math.sqrt(2)) for q in samples):continue
+                        if any(not local.traversable(local.cell(q.x,q.y),route_clearance) for q in samples):continue
                         if any(math.dist(xyz(q),o["position_m"])<=clearance+o["radius_m"]+o["uncertainty_m"] for q in [state]+samples for o in observed):continue
                         heading=math.atan2(target[1]-end.y,target[0]-end.x)-end.yaw
                         score=math.dist((end.x,end.y,end.z),(*target,goal[2]))+.15*abs(math.atan2(math.sin(heading),math.cos(heading)))
@@ -103,7 +104,7 @@ def run(s):
                 if any(sweep_distance(xyz(state),xyz(end),xyz(states[j]),xyz(next_states[j]))<=p.radius_m+profiles[j].radius_m+margin+p.max_speed_mps*dt+profiles[j].max_speed_mps*dt for j in raw if j!=k):
                     rejected+=1;continue
                 next_states[k]=end;accepted=True
-                decisions.append({"member":k,"status":"kinematic_reference_accepted","control":asdict(control),"route_cells":len(route),"cpp_rta_assessed":False})
+                decisions.append({"member":k,"status":"kinematic_reference_accepted","control":asdict(control),"route_cells":len(route),"route_target":list(target),"stationary":math.dist(xyz(state),xyz(end))<1e-9 and abs(state.yaw-end.yaw)<1e-9,"candidate_count":len(options),"cpp_rta_assessed":False})
                 break
             if not accepted:decisions.append({"member":k,"status":"no_candidate"})
         # Ground truth sampled endpoint separation is a measurement, not continuous collision certification.

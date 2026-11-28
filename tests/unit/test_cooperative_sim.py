@@ -12,3 +12,12 @@ class CooperativeSimTests(unittest.TestCase):
         self.assertEqual(r["metrics"]["tasks_completed"],1)
         self.assertFalse(r["cpp_rta_connected"])
         self.assertFalse(r["motion_authorized"])
+
+    def test_heterogeneous_obstacle_mission(self):
+        import json
+        from pathlib import Path
+        scenario=Path(__file__).resolve().parents[2]/"simulation/pilots/cooperative_kinematic.json"
+        r=run(json.loads(scenario.read_text()))
+        self.assertEqual(r["metrics"]["tasks_completed"],r["metrics"]["tasks_total"])
+        self.assertFalse(r["cpp_rta_connected"])
+        self.assertFalse(r["motion_authorized"])
