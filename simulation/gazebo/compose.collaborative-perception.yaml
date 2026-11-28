@@ -32,3 +32,8 @@ services:
     profiles: ["test"]
     command: ["bash","-lc","source /opt/ros/jazzy/setup.bash && PYTHONPATH=/opt/autonomymind/src:$$PYTHONPATH python3 /gazebo/collaborative_probe.py"]
     volumes: ["./outbox:/gazebo/outbox"]
+  planning-probe:
+    <<: *sensor
+    profiles: ["test"]
+    command: ["bash","-lc","source /opt/ros/jazzy/setup.bash && PYTHONPATH=/opt/autonomymind/src:$$PYTHONPATH python3 /gazebo/collaborative_planning_probe.py"]
+    volumes: ["./outbox:/gazebo/outbox"]

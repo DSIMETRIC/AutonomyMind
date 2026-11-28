@@ -1,0 +1,25 @@
+{
+  "map": {
+    "width": 80,
+    "height": 80,
+    "resolution": 0.25,
+    "origin": [
+      -10,
+      -10
+    ]
+  },
+  "start": [
+    0,
+    0
+  ],
+  "goal": [
+    6,
+    -3
+  ],
+  "clearance_m": 0.65,
+  "local_source": "rover",
+  "remote_sources": [
+    "drone"
+  ],
+  "map_prior": "synthetic_free_reference"
+}

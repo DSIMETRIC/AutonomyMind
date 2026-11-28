@@ -175,7 +175,13 @@ A read-only reference probe projects live simulated LiDAR returns into the indep
 
 ## Collaborative perception reference
 
-Two independent Gazebo sensor producers contribute live simulated LiDAR evidence to a shared DDS world service. A probe checks the occupied-cell union and additional evidence from a second source. See [collaborative perception](docs/collaborative-perception.md). Stationary reference only; execution pending.
+Two independent Gazebo sensor producers contribute live simulated LiDAR evidence to a shared DDS world service. A probe checks the occupied-cell union and additional evidence from a second source. See [collaborative perception](docs/collaborative-perception.md). Stationary reference only; operator-reported PASS: 9 rover cells, 8 drone cells, 4 overlapping, 13 total.
+
+## Collaborative route planning
+
+A read-only DDS snapshot consumer compares local-only and shared-evidence A* routes and checks whether remote evidence invalidates a local route. See [collaborative planning](docs/collaborative-planning.md). New probe execution pending; no motion or RTA authorization.
+
+See [reported workstation validation](docs/workstation-validation.md) for experimental results and scope.
 
 ## Documentation
 
