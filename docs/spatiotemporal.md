@@ -1,0 +1,7 @@
+# Spatiotemporal coordination reference
+
+A transport-neutral, deterministic advisory scheduler accepts complete fleet batches of timestamped piecewise-linear 3D proposals in a common world_enu frame. Spherical footprint and uncertainty inflation, plus pairwise margin, are checked analytically over overlapping time intervals, including stationary start and end holds throughout a bounded horizon. Greedy priority order and bounded departure delays resolve some conflicts; a failed batch yields no reservations. Whole-batch revision checks prevent stale replacement; expiry removes the advisory, never establishes free space. Revisions and time are in-process only.
+
+Run `docker compose run --build --rm spatiotemporal-pilot`. Output: semantic_data/outbox/spatiotemporal.json. The reference pilot uses synthetic crossing trajectories and a priority revision; no Gazebo, DDS, online tracking, trajectory generation, vehicle-specific feasibility, authenticated negotiation, distributed reservation consensus or C++ RTA integration is claimed. The revision is a fresh hypothetical plan, not an in-flight transition. The verifier reuses the same geometric algorithm, not independent RTA. Greedy search is incomplete; no solution does not establish infeasibility. No motion authority. Expiry cannot be interpreted as physical clearance. Do not connect to actuators.
+
+Unit tests and live Docker pilot execution pending.

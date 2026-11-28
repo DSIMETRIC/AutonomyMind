@@ -185,7 +185,11 @@ See [reported workstation validation](docs/workstation-validation.md) for experi
 
 ## Collaborative planning benchmark
 
-A configurable multi-goal evaluator measures route changes, unchanged routes and unreachable goals from one frozen live evidence snapshot. See [benchmark](docs/collaborative-benchmark.md). Execution pending.
+A configurable multi-goal evaluator measures route changes, unchanged routes and unreachable goals from one frozen live evidence snapshot. See [benchmark](docs/collaborative-benchmark.md). Operator-reported PASS: 42 goals, 6 alternatives, 27 unchanged, 1 no shared route, 8 local unreachable.
+
+## Spatiotemporal coordination reference
+
+A bounded advisory scheduler detects continuous piecewise-linear 3D conflicts, schedules departure delays and supports whole-fleet revisions and expiry. See [spatiotemporal coordination](docs/spatiotemporal.md). Offline pilot execution pending; no physical movement authority.
 
 ## Documentation
 

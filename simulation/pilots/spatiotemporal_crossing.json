@@ -1,0 +1,74 @@
+{
+  "settings": {
+    "horizon_s": 20,
+    "delay_step_s": 0.5,
+    "max_delay_s": 8,
+    "margin_m": 0.25
+  },
+  "lease_s": 10,
+  "requests": [
+    {
+      "member": "rover",
+      "priority": 3,
+      "radius_m": 0.35,
+      "uncertainty_m": 0.1,
+      "points": [
+        [
+          0,
+          -4,
+          0,
+          0
+        ],
+        [
+          8,
+          4,
+          0,
+          0
+        ]
+      ]
+    },
+    {
+      "member": "road",
+      "priority": 2,
+      "radius_m": 0.75,
+      "uncertainty_m": 0.1,
+      "points": [
+        [
+          0,
+          0,
+          -4,
+          0
+        ],
+        [
+          8,
+          0,
+          4,
+          0
+        ]
+      ]
+    },
+    {
+      "member": "drone",
+      "priority": 1,
+      "radius_m": 0.4,
+      "uncertainty_m": 0.1,
+      "points": [
+        [
+          0,
+          0,
+          0,
+          4
+        ],
+        [
+          8,
+          0,
+          0,
+          2
+        ]
+      ]
+    }
+  ],
+  "revised_priorities": {
+    "road": 4
+  }
+}
