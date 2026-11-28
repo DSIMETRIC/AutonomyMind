@@ -1,0 +1,19 @@
+# Trusted local DDS advisory reference; no motion interface.
+services:
+  reservations:
+    image: autonomymind/agents:dev
+    network_mode: host
+    ipc: host
+    environment:
+      ROS_DOMAIN_ID: "${AUTONOMYMIND_AGENT_DOMAIN:-79}"
+    command: ["python3","-m","autonomymind_runtime.reservation_agent","--scenario","/workspace/pilots/spatiotemporal_crossing.json"]
+    volumes: ["./semantic_data/outbox:/outbox"]
+  reservation-probe:
+    image: autonomymind/agents:dev
+    network_mode: host
+    ipc: host
+    environment:
+      ROS_DOMAIN_ID: "${AUTONOMYMIND_AGENT_DOMAIN:-79}"
+    profiles: ["test"]
+    command: ["python3","-m","autonomymind_runtime.reservation_probe","--scenario","/workspace/pilots/spatiotemporal_crossing.json"]
+    volumes: ["./semantic_data/outbox:/outbox"]

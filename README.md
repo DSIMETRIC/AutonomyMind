@@ -191,6 +191,10 @@ A configurable multi-goal evaluator measures route changes, unchanged routes and
 
 A bounded advisory scheduler detects continuous piecewise-linear 3D conflicts, schedules departure delays and supports whole-fleet revisions and expiry. See [spatiotemporal coordination](docs/spatiotemporal.md). Offline pilot execution pending; no physical movement authority.
 
+## Distributed trajectory reservations
+
+A DDS advisory reservation service accepts complete synthetic fleet batches and exposes revision and expiry queries. See [distributed reservations](docs/distributed-reservations.md). Probe execution pending; no independent vehicle negotiation or motion authority.
+
 ## Documentation
 
 - [Architecture and roadmap](docs/architecture.md)
