@@ -20,3 +20,5 @@ Single-goal collaborative planning: reported revision 1156, 9 local cells, 13 un
 DDS reservation probe: operator-reported PASS, 3 members, 1 initial conflict, 3 scheduled and 3 revised, 0 remaining geometric conflicts, stale revision and incomplete batch rejected, expiry observed. Synthetic proposals, no C++ RTA or motion. Standalone pilot output not supplied.
 
 Integrated stationary preview: operator-reported PASS after float64 conversion fix a8a3383. Two zero-delay reservations and two accepted C++ assessments, rover (0,0,0) to (1,0,0), drone (0,0,3) to (1,0,3), duration 2 s each. No motion; coverage incomplete.
+
+Rover execution gate: operator-reported PASS, target_reached, displacement 0.5106645324759902 m, 12 pulses, stationary_final true, no physical hardware. Static drone; watchdog/bridge failure injection not performed.

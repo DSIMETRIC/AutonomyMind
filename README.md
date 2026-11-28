@@ -201,7 +201,11 @@ Live Gazebo odometry feeds a read-only DDS reservation batch and separate C++ re
 
 ## Gazebo-only rover execution gate
 
-Experimental bounded rover pulses with fresh DDS advisory reservations, independent RTA checks and LiDAR relay. See [execution gate](docs/execution-gate.md). Live run pending; no physical hardware or simultaneous vehicle motion.
+Experimental bounded rover pulses with fresh DDS advisory reservations, independent RTA checks and LiDAR relay. See [execution gate](docs/execution-gate.md). Operator-reported PASS: 0.5106645 m displacement, 12 pulses, stationary final state. No physical hardware or simultaneous vehicle motion.
+
+## Collaborative navigation preview
+
+Shared live stationary sensor evidence feeds A*, local trajectory sampling, DDS reservations and independent rover C++ assessment. See [collaborative navigation](docs/collaborative-navigation.md). Read-only; execution pending.
 
 ## Documentation
 

@@ -1,0 +1,51 @@
+{
+  "map": {
+    "width": 80,
+    "height": 80,
+    "resolution": 0.25,
+    "origin": [
+      -10,
+      -10
+    ]
+  },
+  "goal": [
+    6,
+    -3
+  ],
+  "local_source": "rover",
+  "remote_sources": [
+    "drone"
+  ],
+  "map_prior": "synthetic_free_reference",
+  "profile": {
+    "radius_m": 0.5,
+    "margin_m": 0.15,
+    "speed_mps": 0.2,
+    "max_yaw_rate_rad_s": 0.5,
+    "horizon_s": 1,
+    "dt_s": 0.25,
+    "velocity_samples": 3,
+    "yaw_samples": 5
+  },
+  "settings": {
+    "horizon_s": 5,
+    "delay_step_s": 0.5,
+    "max_delay_s": 1,
+    "margin_m": 0.25
+  },
+  "lease_s": 8,
+  "requests": [
+    {
+      "member": "rover",
+      "priority": 2,
+      "radius_m": 0.5,
+      "uncertainty_m": 0.15
+    },
+    {
+      "member": "drone",
+      "priority": 1,
+      "radius_m": 0.4,
+      "uncertainty_m": 0.15
+    }
+  ]
+}

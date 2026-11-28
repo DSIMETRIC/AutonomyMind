@@ -1,0 +1,28 @@
+# Overlay on standalone collaborative-perception, no command bridge.
+services:
+  navigation-rta:
+    image: autonomymind/ros-gazebo-base:dev
+    network_mode: host
+    ipc: host
+    environment:
+      ROS_DOMAIN_ID: "81"
+    command: ["bash","-lc","source /opt/ros/jazzy/setup.bash && source /workspace/install/setup.bash && ros2 run autonomymind_decision simulation_rta_node --ros-args -r __ns:=/fleet/rover --params-file /config/fleet_rta_profiles.yaml"]
+    volumes: ["./fleet_rta_profiles.yaml:/config/fleet_rta_profiles.yaml:ro"]
+  navigation-reservations:
+    image: autonomymind/gazebo:dev
+    network_mode: host
+    ipc: host
+    environment:
+      ROS_DOMAIN_ID: "81"
+    command: ["bash","-lc","source /opt/ros/jazzy/setup.bash && PYTHONPATH=/opt/autonomymind/src:$$PYTHONPATH python3 -m autonomymind_runtime.reservation_agent --scenario /gazebo/collaborative_navigation.json --output /gazebo/outbox/navigation_reservations.json"]
+    volumes: ["./outbox:/gazebo/outbox"]
+  navigation-probe:
+    image: autonomymind/gazebo:dev
+    network_mode: host
+    ipc: host
+    environment:
+      ROS_DOMAIN_ID: "81"
+    profiles: ["test"]
+    command: ["bash","-lc","source /opt/ros/jazzy/setup.bash && source /workspace/install/setup.bash && PYTHONPATH=/opt/autonomymind/src:$$PYTHONPATH python3 /gazebo/collaborative_navigation_probe.py"]
+    volumes: ["./outbox:/gazebo/outbox"]
+    depends_on: [navigation-rta,navigation-reservations,world,rover-sensor,drone-sensor,bridge]
