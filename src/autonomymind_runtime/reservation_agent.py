@@ -1,6 +1,7 @@
 """Trusted local DDS advisory reservation service; no actuator interface."""
 import argparse
 import json
+import math
 import time
 from pathlib import Path
 import rclpy
@@ -14,7 +15,10 @@ class ReservationAgent(Node):
     def __init__(self,config,output):
         super().__init__("agent_reservations")
         self.coordinator=Coordinator([r["member"] for r in config["requests"]],**config["settings"])
-        self.lease=config["lease_s"];self.output=Path(output)
+        self.lease=config["lease_s"]
+        if not math.isfinite(self.lease) or not 0<self.lease<=self.coordinator.horizon:
+            raise ValueError("invalid lease: expected 0 < lease_s <= horizon_s")
+        self.output=Path(output)
         self.receiver=Receiver("reservations",{"reservation.submit","reservation.query"})
         qos=QoSProfile(depth=32,reliability=ReliabilityPolicy.RELIABLE)
         self.pub=self.create_publisher(String,"/autonomymind_agents/events",qos)

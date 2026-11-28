@@ -26,3 +26,10 @@ class ReservationTests(unittest.TestCase):
     def test_missing_peer(self):
         c=Coordinator(["a","b"],12,.5,6,.2)
         with self.assertRaises(ValueError):c.plan([req("a",2,(-2,0,0),(2,0,0))],0,0,5)
+
+    def test_lease_exceeds_horizon(self):
+        c=Coordinator(["a"],5,.5,1,.2)
+        a=req("a",1,(0,0,0),(1,0,0))
+        with self.assertRaisesRegex(ValueError,"invalid lease"):
+            c.plan([a],0,0,8)
+        self.assertEqual(c.plan([a],0,0,3)["status"],"scheduled")

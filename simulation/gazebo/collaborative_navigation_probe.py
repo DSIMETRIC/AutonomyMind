@@ -80,7 +80,7 @@ def main():
         rows=[{**r,"points":points if r["member"]=="rover" else [[0.,*drone],[duration,*drone]]} for r in cfg["requests"]]
         state=ask("reservations","reservation.query",{})
         plan=ask("reservations","reservation.submit",{"frame_id":"world_enu","expected_revision":state["revision"],"requests":rows})
-        if plan.get("status")!="scheduled" or plan.get("motion_authorized") is not False:raise RuntimeError("reservation rejected")
+        if plan.get("status")!="scheduled" or plan.get("motion_authorized") is not False:raise RuntimeError("reservation rejected: "+json.dumps(plan,sort_keys=True))
         reserved={r["member"]:r for r in plan["reservations"]}
         if set(reserved)!={r["member"] for r in rows} or any(reserved[r["member"]]["delay_s"]!=0 or any(reserved[r["member"]][k]!=v for k,v in r.items()) for r in rows):raise RuntimeError("reservation mismatch")
         current=capture()

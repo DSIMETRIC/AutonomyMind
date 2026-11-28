@@ -33,7 +33,7 @@
     "max_delay_s": 1,
     "margin_m": 0.25
   },
-  "lease_s": 8,
+  "lease_s": 3,
   "requests": [
     {
       "member": "rover",
