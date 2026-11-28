@@ -1,0 +1,43 @@
+# Isolated Gazebo-only overlay on base, closed_loop, fleet-rta.
+services:
+  gazebo:
+    network_mode: host
+    ipc: host
+    environment:
+      ROS_DOMAIN_ID: "83"
+      GZ_PARTITION: autonomymind_execution_gate
+  bridge:
+    network_mode: host
+    ipc: host
+    environment:
+      ROS_DOMAIN_ID: "83"
+      GZ_PARTITION: autonomymind_execution_gate
+  rta:
+    network_mode: host
+    ipc: host
+    environment:
+      ROS_DOMAIN_ID: "83"
+  reservations:
+    image: autonomymind/gazebo:dev
+    network_mode: host
+    ipc: host
+    environment:
+      ROS_DOMAIN_ID: "83"
+    command: ["bash","-lc","source /opt/ros/jazzy/setup.bash && PYTHONPATH=/opt/autonomymind/src:$$PYTHONPATH python3 -m autonomymind_runtime.reservation_agent --scenario /gazebo/execution_gate.json --output /gazebo/outbox/execution_reservations.json"]
+    volumes: ["./outbox:/gazebo/outbox"]
+  watchdog:
+    image: autonomymind/gazebo:dev
+    network_mode: host
+    ipc: host
+    environment:
+      ROS_DOMAIN_ID: "83"
+    command: ["bash","-lc","source /opt/ros/jazzy/setup.bash && python3 /gazebo/evasion_watchdog.py"]
+  execution-gate:
+    image: autonomymind/gazebo:dev
+    network_mode: host
+    ipc: host
+    environment:
+      ROS_DOMAIN_ID: "83"
+    command: ["bash","-lc","source /opt/ros/jazzy/setup.bash && source /workspace/install/setup.bash && PYTHONPATH=/opt/autonomymind/src:$$PYTHONPATH python3 /gazebo/execution_gate_probe.py"]
+    volumes: ["./outbox:/gazebo/outbox"]
+    depends_on: [bridge,rta,reservations,watchdog]

@@ -1,0 +1,25 @@
+{
+  "settings": {
+    "horizon_s": 5,
+    "delay_step_s": 0.5,
+    "max_delay_s": 1,
+    "margin_m": 0.25
+  },
+  "lease_s": 3,
+  "target_distance_m": 0.5,
+  "speed_mps": 0.2,
+  "requests": [
+    {
+      "member": "rover",
+      "priority": 2,
+      "radius_m": 0.5,
+      "uncertainty_m": 0.15
+    },
+    {
+      "member": "drone",
+      "priority": 1,
+      "radius_m": 0.4,
+      "uncertainty_m": 0.15
+    }
+  ]
+}

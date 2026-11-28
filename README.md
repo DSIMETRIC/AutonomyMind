@@ -197,7 +197,11 @@ A DDS advisory reservation service accepts complete synthetic fleet batches and 
 
 ## Integrated stationary autonomy preview
 
-Live Gazebo odometry feeds a read-only DDS reservation batch and separate C++ reference assessments for rover and multirotor. See [integrated preview](docs/integrated-preview.md). Execution pending; no motion or full closed-loop integration.
+Live Gazebo odometry feeds a read-only DDS reservation batch and separate C++ reference assessments for rover and multirotor. See [integrated preview](docs/integrated-preview.md). Operator-reported PASS: two reservations and two accepted reference assessments. No motion or full closed-loop integration.
+
+## Gazebo-only rover execution gate
+
+Experimental bounded rover pulses with fresh DDS advisory reservations, independent RTA checks and LiDAR relay. See [execution gate](docs/execution-gate.md). Live run pending; no physical hardware or simultaneous vehicle motion.
 
 ## Documentation
 
