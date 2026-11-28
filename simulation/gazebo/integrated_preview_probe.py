@@ -83,13 +83,15 @@ def main():
             if any(math.dist(pos(current[j]),pos(initial[j]))>.03 for j in all_ids):raise RuntimeError("scene moved")
             r=reservations[k]
             if r["delay_s"]!=0:raise RuntimeError("preview supports zero-delay segments only")
-            own=current[k];start=pos(own);goal=r["points"][-1][1:];dt=r["points"][-1][0]
+            own=current[k];start=pos(own);goal=[float(v) for v in r["points"][-1][1:]];dt=float(r["points"][-1][0])
+            if not math.isfinite(dt) or dt<=0 or not all(math.isfinite(v) for v in goal):raise RuntimeError("invalid reservation segment")
             delta=[b-a for a,b in zip(start,goal)]
             q=S.Request();q.vehicle_id="sim-"+k;q.frame_id="world_enu"
             q.sequence=time.time_ns();q.odom_stamp_sec=own.header.stamp.sec;q.odom_stamp_nanosec=own.header.stamp.nanosec
             q.sample_dt_s=dt;q.x_m=[0.,delta[0]];q.y_m=[0.,delta[1]];q.z_m=[0.,delta[2]]
             q.peak_speed_mps=math.hypot(*delta)/dt;q.peak_vertical_speed_mps=abs(delta[2])/dt
             q.peak_accel_mps2=q.peak_speed_mps/dt;q.peak_jerk_mps3=q.peak_accel_mps2/dt
+            q.peak_yaw_rate_dps=0.0;q.peak_bank_angle_deg=0.0
             q.environment_valid=True;q.communication_valid=True
             for j in all_ids:
                 if j==k:continue
